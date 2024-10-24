@@ -11,14 +11,13 @@ LoginWindow::LoginWindow(QWidget *parent) :
     QWidget(parent)
 {
     initUI();
+    initConnect();
     reloadQss();
-    // 创建一个新的QAction
-    reloadQssAction = new QAction(tr("Reload QSS"), this);
+}
+
+void LoginWindow::initConnect() {
     // 连接QAction的triggered信号到一个槽函数
     connect(reloadQssAction, &QAction::triggered, this, &LoginWindow::reloadQss);
-    // 添加QAction到右键菜单
-    contextMenu.addAction(reloadQssAction);
-    
 }
 void LoginWindow::initUI() {
     this->setObjectName("loginWindow");
@@ -98,9 +97,14 @@ void LoginWindow::initUI() {
     mainLayout->addWidget(loginBtn, 0, Qt::AlignHCenter);
     registerBtn = new QPushButton;
     registerBtn->setObjectName(QString("registerBtn"));
-    registerBtn->setText(QString("登录"));
+    registerBtn->setText(QString("注册"));
     registerBtn->setFixedSize(registerBtn->sizeHint().width(), 30);
     mainLayout->addWidget(registerBtn, 0, Qt::AlignHCenter);
+
+    // 创建一个新的QAction
+    reloadQssAction = new QAction(tr("Reload QSS"), this);
+    // 添加QAction到右键菜单
+    contextMenu.addAction(reloadQssAction);
 
 }
 void LoginWindow::paintEvent(QPaintEvent* event){
@@ -108,6 +112,11 @@ void LoginWindow::paintEvent(QPaintEvent* event){
     opt.init(this);
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
+}
+void LoginWindow::contextMenuEvent(QContextMenuEvent* event)
+{
+    // 在鼠标右键点击的位置显示菜单
+    contextMenu.exec(event->globalPos());
 }
 void LoginWindow::reloadQss()
 {

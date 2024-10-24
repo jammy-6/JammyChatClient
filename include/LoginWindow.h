@@ -1,5 +1,5 @@
-#ifndef WEATHERFORECAST_H
-#define WEATHERFORECAST_H
+#ifndef LOGINWINDOW_H
+#define LOGINWINDOW_H
 
 #include <QWidget>
 #include <QMenu>
@@ -27,7 +27,7 @@
 #include <QFrame>
 #include <QApplication>
 #include <QLayout>
-
+#include <qlineedit.h>
 class LoginWindow : public QWidget
 {
     Q_OBJECT
@@ -35,6 +35,7 @@ class LoginWindow : public QWidget
 public:
     explicit LoginWindow(QWidget *parent = nullptr);
     void initUI();
+    void initConnect();
     ~LoginWindow();
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -43,11 +44,8 @@ protected:
 
 protected:
     void paintEvent(QPaintEvent* event);
-    void contextMenuEvent(QContextMenuEvent *event) override
-    {
-        // 在鼠标右键点击的位置显示菜单
-        contextMenu.exec(event->globalPos());
-    }
+    void contextMenuEvent(QContextMenuEvent* event) override;
+
 private:
     QPoint cur_pos;
     QMenu contextMenu;
