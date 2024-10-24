@@ -1,0 +1,70 @@
+#ifndef WEATHERFORECAST_H
+#define WEATHERFORECAST_H
+
+#include <QWidget>
+#include <QMenu>
+#include <QAction>
+#include <QList>
+#include <QLabel>
+#include <QContextMenuEvent>
+#include <QNetworkAccessManager>
+#include <QMessageBox>
+#include <QNetworkReply>
+#include <QDate>
+#include <QHttpMultiPart>
+#include <QPainter>
+#include <QPen>
+#include <QChart>
+#include <QLineSeries>
+#include <QChartView>
+#include <QValueAxis>
+#include <QScrollArea>
+#include <algorithm>
+#include <QTimer>
+#include <QMutex>
+#include <functional>
+#include <QColor>
+#include <QFrame>
+#include <QApplication>
+#include <QLayout>
+
+class LoginWindow : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit LoginWindow(QWidget *parent = nullptr);
+    void initUI();
+    ~LoginWindow();
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    
+
+protected:
+    void paintEvent(QPaintEvent* event);
+    void contextMenuEvent(QContextMenuEvent *event) override
+    {
+        // 在鼠标右键点击的位置显示菜单
+        contextMenu.exec(event->globalPos());
+    }
+private:
+    QPoint cur_pos;
+    QMenu contextMenu;
+    QAction* reloadQssAction;
+    QLabel* titleLabel;
+    QLabel* titlePhotoLabel;
+    QLabel* userLabel;
+    QLineEdit* userEdit;
+    QLabel* passwordLabel;
+    QLineEdit* passwordEdit;
+    QPushButton* forgetPasswordBtn;
+    QPushButton* loginBtn;
+    QPushButton* registerBtn;
+private slots:
+    void reloadQss();
+    
+
+};
+
+#endif 

@@ -1,0 +1,13 @@
+QWidget#loginWindow{
+	background-color: rgb(245,245,245);
+	border:1px solid white;
+	border-radius:20px;
+}
+
+QLabel#titlePhotoLabel{
+	border-image: url(:/LoginWindow/titleLabel.png);
+}
+
+QPushButton#forgetPasswordBtn{
+	background:transparent;
+}

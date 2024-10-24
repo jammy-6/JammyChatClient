@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>LoginWindow/titleLabel.png</file>
+    </qresource>
+</RCC>
