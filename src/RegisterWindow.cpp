@@ -18,6 +18,7 @@ RegisterWindow::RegisterWindow(QWidget *parent) :
 void RegisterWindow::initConnect() {
     // 连接QAction的triggered信号到一个槽函数
     connect(reloadQssAction, &QAction::triggered, this, &RegisterWindow::reloadQss);
+    ///邮箱输入格式验证
     connect(registerEmail->lineEdit, &QLineEdit::textChanged, [=](const QString& text) {
         QRegularExpression regex(R"((^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$))");
         // 使用正则表达式匹配 email

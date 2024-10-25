@@ -29,9 +29,9 @@
 #include <QLayout>
 #include <QLineEdit>
 #include "CustomerWidget.h"
+#include "Global.h"
 
 
-const QString errorMailFormat = "” œ‰∏Ò Ω¥ÌŒÛ£°";
 
 class RegisterWindow : public QWidget
 {
