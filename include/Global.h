@@ -1,7 +1,9 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 #include <QString>
-enum MOUDLE {
+#include "nlohmann/json.hpp"
+
+enum MODULE {
 	MOUDLE_REGISTER = 0,
 };
 

@@ -32,7 +32,7 @@
 #include "Global.h"
 
 
-
+class Controller;
 class RegisterWindow : public QWidget
 {
     Q_OBJECT
@@ -42,6 +42,8 @@ public:
     void initUI();
     void initConnect();
     void updateMsgHint(QWidget* widget, QString hint, bool status);
+    ///用于判断用户所填入的信息是否有误
+    bool judgeInfo();
     ~RegisterWindow();
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -53,6 +55,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
+    friend class Controller;
     QPoint cur_pos;
     QMenu contextMenu;
     QAction* reloadQssAction;

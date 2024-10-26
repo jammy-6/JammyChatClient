@@ -12,13 +12,15 @@
 class Controller: public QObject,public Singleton<Controller>,public enable_shared_from_this<Controller> {
 	Q_OBJECT
 public:
-	
-	~Controller();
 	void init(LoginWindow* loginWindow, RegisterWindow* registerWindow);
+	~Controller();
 	void handleGetValidateCodeSuccess(QString data);
+public slots:
+	void slotGetValidateCode();
 private:
 	friend class Singleton<Controller>;
 	Controller();
+	
 	LoginWindow* loginWindow_;
 	RegisterWindow* registerWindow_;
 };

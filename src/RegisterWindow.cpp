@@ -31,6 +31,16 @@ void RegisterWindow::initConnect() {
         }
      });
 }
+
+bool RegisterWindow::judgeInfo() {
+    if (msgHintLabel->property("status") == "error") {
+        return false;
+    }
+    else if(msgHintLabel->property("status") == "normal"){
+        return true;
+    }
+    return false;
+}
 void RegisterWindow::initUI() {
     this->setObjectName("registerWindow");
     this->setAttribute(Qt::WA_TranslucentBackground, true);
@@ -136,7 +146,7 @@ void RegisterWindow::initUI() {
     confirmAndCancelLayout->addWidget(confirmBtn);
     cancelBtn = new QPushButton;
     cancelBtn->setObjectName("cancelBtn");
-    cancelBtn->setText(QString("确认"));
+    cancelBtn->setText(QString("取消"));
     cancelBtn->setFixedWidth(60);
     confirmAndCancelLayout->addWidget(cancelBtn);
     mainLayout->addWidget(confirmAndCancelWidget,0, Qt::AlignHCenter);

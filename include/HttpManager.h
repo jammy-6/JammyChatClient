@@ -23,9 +23,9 @@ private:
     QNetworkAccessManager manager_;
 public:
     ~HttpManager();
-    void postHttpRequest(QUrl url, nlohmann::json json, MOUDLE module,ID id);
+    void postHttpRequest(QUrl url, nlohmann::json json, MODULE module,ID id);
 signals:
-    void signalHttpFinish(MOUDLE module, ID id,ERRORCODE code,QString data);
+    void signalHttpFinish(MODULE module, ID id,ERRORCODE code,QString data);
 
 };
 #endif // !HTTPMANAGER_H

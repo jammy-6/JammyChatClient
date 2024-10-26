@@ -1,5 +1,5 @@
 #include "HttpManager.h"
-
+#include <regex>
 HttpManager::HttpManager() {
 
 }
@@ -8,12 +8,12 @@ HttpManager::~HttpManager() {
 
 }
 
-void HttpManager::postHttpRequest(QUrl url, nlohmann::json json, MOUDLE module, ID id) {
+void HttpManager::postHttpRequest(QUrl url, nlohmann::json json, MODULE module, ID id) {
 	QNetworkRequest request(url);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-	request.setHeader(QNetworkRequest::ContentLengthHeader, json.size());
+	request.setHeader(QNetworkRequest::ContentLengthHeader, json.dump().size());
 	auto self = shared_from_this();
-	QNetworkReply* reply = manager_.post(request, QByteArray(json.dump().c_str()));
+	QNetworkReply* reply = manager_.post(request, QByteArray::fromStdString(json.dump()));
 	QObject::connect(reply, &QNetworkReply::finished, [self, reply, module, id]() {
 		if (reply->error() != QNetworkReply::NoError) {
 			qDebug() << reply->errorString();
