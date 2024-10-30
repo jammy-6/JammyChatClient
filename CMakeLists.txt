@@ -1,6 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
 PROJECT(JammyChatClient VERSION 1.0 LANGUAGES CXX)
 
+
+# 设置 C++ 标准
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 # 设置项目资源文件路径
 set(RESOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/resource)
 message(STATUS "RESOURCE_DIR  = ${RESOURCE_DIR}")
@@ -38,7 +43,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-MESSAGE("=================================================================")
+MESSAGE(STATUS "=================================================================")
 if(DEFINED Qt5_FOUND)
     MESSAGE(STATUS "find Qt5_FOUND: ${Qt5_DIR}")
     MESSAGE(STATUS "find Qt5_FOUND: ${Qt5_FOUND}")
@@ -50,7 +55,8 @@ if(DEFINED Qt5_FOUND)
 else()
     MESSAGE(STATUS "not find Qt5_FOUND: ${Qt5_FOUND}")
 endif()
-MESSAGE("=================================================================")
+MESSAGE(STATUS "=================================================================")
+
 
 #添加qt包include头文件
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
@@ -80,13 +86,21 @@ set(Boost_NO_SYSTEM_PATHS ON)
 # 查找 Boost 库
 set(BOOST_ROOT "D:/Program Files/boost_1_80_0/stage/lib/cmake")
 find_package(Boost REQUIRED COMPONENTS  system filesystem)
+MESSAGE(STATUS "=================================================================")
+if(DEFINED Boost_FOUND)
     message(STATUS "Boost version: ${Boost_VERSION}")
     message(STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
     message(STATUS "Boost library dirs: ${Boost_LIBRARY_DIRS}")
     message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
+else ()
+    message(STATUS "Boost Not Found!!!")
+endif ()
+MESSAGE(STATUS "=================================================================")
  # 包含 Boost 头文件
 include_directories(${Boost_INCLUDE_DIRS})
 message(STATUS "Boost_INCLUDE_DIRS = ${Boost_INCLUDE_DIRS}")
+
+
 
 # 添加项目头文件路径
 set("${PROJECT_NAME}_include_dir" "${CMAKE_CURRENT_SOURCE_DIR}/include") 
@@ -108,11 +122,13 @@ add_executable(
 
 # 配置链接库
 target_link_libraries(
-    ${PROJECT_NAME} 
-    Qt5::Widgets
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Network
-    ${Boost_LIBRARIES}
-    Boost::filesystem
+    ${PROJECT_NAME}
+        PUBLIC
+        Qt5::Widgets
+        Qt5::Core
+        Qt5::Gui
+        Qt5::Network
+        ${Boost_LIBRARIES}
+        Boost::filesystem
+
 )

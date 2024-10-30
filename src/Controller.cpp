@@ -3,6 +3,9 @@
 #include "Controller.h"
 #include <QPushButton>
 #include "Global.h"
+#include "ConfigMgr.h"
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
 Controller::~Controller() {
 
 }
@@ -11,42 +14,68 @@ Controller::Controller() {
 	
 }
 
+void Controller::slotHttpFinished(MODULE module, ID id, ERRORCODE code, QString data) {
+	if (code == ERRORCODE::SUCCESS) {
+        std::cout<<"Http Success : "<<data.toStdString()<<std::endl;
+		switch (id) {
+		case ID::ID_GET_VALIDATE_CODE: ///éªŒè¯ç èŽ·å–æˆåŠŸ
+            std::cout<<" èŽ·å–éªŒè¯ç æˆåŠŸï¼ "<<std::endl;
+			this->handleGetValidateCodeSuccess(data);
+			break;
+		case ID::ID_USER_REGISTER:
+
+			if (code == 0) {
+				std::cout << "èŽ·å–è¿”å›žç»“æžœ" << data.toStdString() << std::endl;
+				std::cout << " ç”¨æˆ·æ³¨å†ŒæˆåŠŸï¼ " << std::endl;
+				registerWindow_->updateMsgHint(nullptr, hintRegisterSuccess, true);
+			}
+			break;
+		};
+	}
+}
 void Controller::slotGetValidateCode() {
 	if (registerWindow_->judgeInfo()) {
 		QString email = registerWindow_->registerEmail->lineEdit->text();
 		nlohmann::json json;
 		json["email"] = email.toStdString();
-		HttpManager::GetInstance()->postHttpRequest(QUrl("http://192.168.0.205:8080/get_varifycode"), json, MODULE::MOUDLE_REGISTER, ID::ID_GET_VALIDATE_CODE);
+		std::string url = "http://" + gConfigMgr["JammyGateServer"]["Ip"]+":"+ gConfigMgr["JammyGateServer"]["Port"] +"/get_varifycode" ;
+		HttpManager::GetInstance()->postHttpRequest(QUrl(QString::fromStdString(url)), json, MODULE::MOUDLE_REGISTER, ID::ID_GET_VALIDATE_CODE);
 	}
 
 }
+
+void Controller::slotRegistUser(){
+	if (!registerWindow_->judgeRegistInfoComplete()) {
+		return;
+	}
+	json request_json;
+	request_json["email"] = registerWindow_->registerEmail->lineEdit->text().toStdString();
+	request_json["user"] = registerWindow_->registerUser->lineEdit->text().toStdString();
+	request_json["passwd"] = registerWindow_->registerPassword->lineEdit->text().toStdString();
+	request_json["confirm"] = registerWindow_->registerConfirmPassword->lineEdit->text().toStdString();
+	request_json["code"] = registerWindow_->registerValidateCodeEdit->text().toStdString();
+	std::string url = "http://" + gConfigMgr["JammyGateServer"]["Ip"] + ":" + gConfigMgr["JammyGateServer"]["Port"] + "/user_register";
+	HttpManager::GetInstance()->postHttpRequest(QString::fromStdString(url), request_json, MODULE::MOUDLE_REGISTER, ID::ID_USER_REGISTER);
+	registerWindow_->updateMsgHint(nullptr, hintRegisterProcess, true);
+	return;
+}
+
 void Controller::init(LoginWindow* loginWindow, RegisterWindow* registerWindow) {
 	this->loginWindow_ = loginWindow;
 	this->registerWindow_ = registerWindow;
 
 	auto self = shared_from_this();
-	///´¦ÀíhttpÇëÇóÁ¬½Ó
-	QObject::connect(HttpManager::GetInstance().get(), &HttpManager::signalHttpFinish, [self](MODULE module, ID id, ERRORCODE code, QString data) {
-		if (code == ERRORCODE::SUCCESS) {
-			switch (id) {
-			case ID::ID_GET_VALIDATE_CODE: ///ÑéÖ¤Âë»ñÈ¡³É¹¦
-				self->handleGetValidateCodeSuccess(data);
-				break;
-			case ID::ID_USER_REGISTER:
-				
-				break;
-			};
-		}
-	});
-	///Á¬½Ó»ñÈ¡ÑéÖ¤ÂëÐÅºÅ²Û
+	///å¤„ç†httpè¯·æ±‚è¿žæŽ¥
+	QObject::connect(HttpManager::GetInstance().get(), &HttpManager::signalHttpFinish,this,&Controller::slotHttpFinished);
+	///è¿žæŽ¥èŽ·å–éªŒè¯ç ä¿¡å·æ§½
 	connect(registerWindow_->getValidateCodeBtn, &QPushButton::clicked, this, &Controller::slotGetValidateCode);
+    connect(registerWindow_->confirmBtn,&QPushButton::clicked,this,&Controller::slotRegistUser);
 }
 
 void Controller::handleGetValidateCodeSuccess(QString data) {
 	nlohmann::json responseBody = nlohmann::json::parse(data.toStdString());
-	if (responseBody.contains("error")&& responseBody["error"]==0) {
-		registerWindow_->updateMsgHint(nullptr,QString( "»ñÈ¡ÑéÖ¤Âë³É¹¦£¡"), true);
+	if (responseBody.contains("error_code")&& responseBody["error_code"]==0) {
+		registerWindow_->updateMsgHint(nullptr, hintGetValidateCodeSuccess, true);
 	}
 	std::cout << data.toStdString()<<std::endl;
-
 }

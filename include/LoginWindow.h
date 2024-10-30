@@ -38,12 +38,12 @@ public:
     void initConnect();
     ~LoginWindow();
 protected:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
     
 
 protected:
-    void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:

@@ -42,8 +42,9 @@ public:
     void initUI();
     void initConnect();
     void updateMsgHint(QWidget* widget, QString hint, bool status);
-    ///ÓÃÓÚÅĞ¶ÏÓÃ»§ËùÌîÈëµÄĞÅÏ¢ÊÇ·ñÓĞÎó
+    ///ç”¨äºåˆ¤æ–­ç”¨æˆ·æ‰€å¡«å…¥çš„ä¿¡æ¯æ˜¯å¦æœ‰è¯¯
     bool judgeInfo();
+    bool judgeRegistInfoComplete();
     ~RegisterWindow();
 protected:
     void mousePressEvent(QMouseEvent *event);

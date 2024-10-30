@@ -5,10 +5,13 @@
 #include "HttpManager.h"
 #include <memory>
 #include "Controller.h"
+#include "ConfigMgr.h"
+
+ConfigMgr gConfigMgr;
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
 
     LoginWindow loginWindow;
     RegisterWindow registerWindow;

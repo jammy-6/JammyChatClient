@@ -41,6 +41,38 @@ bool RegisterWindow::judgeInfo() {
     }
     return false;
 }
+bool RegisterWindow::judgeRegistInfoComplete() {
+    if (registerUser->lineEdit->text().isEmpty()) {
+        updateMsgHint(nullptr, errorUserNameEmpty, false);
+        return false;
+    }
+    if (registerEmail->lineEdit->text().isEmpty()) {
+        updateMsgHint(nullptr, errorUserEmailEmpty, false);
+        return false;
+    }
+    if (registerPassword->lineEdit->text().isEmpty()) {
+        updateMsgHint(nullptr, errorUserPasswordEmpty, false);
+        return false;
+    }
+    if (registerConfirmPassword->lineEdit->text().isEmpty()) {
+        updateMsgHint(nullptr, errorUserConfirmPasswordEmpty, false);
+        return false;
+    }
+    if (registerValidateCodeEdit->text().isEmpty()) {
+        updateMsgHint(nullptr, errorUserValidateCodeEmpty, false);
+        return false;
+    }
+    if (registerConfirmPassword->lineEdit->text().isEmpty()) {
+        updateMsgHint(nullptr, errorUserConfirmPasswordEmpty, false);
+        return false;
+    }
+    if (registerPassword->lineEdit->text() != registerConfirmPassword->lineEdit->text()) {
+        updateMsgHint(nullptr, errorUserPasswordNotEqual, false);
+        return false;
+    }
+    return true;
+
+}
 void RegisterWindow::initUI() {
     this->setObjectName("registerWindow");
     this->setAttribute(Qt::WA_TranslucentBackground, true);

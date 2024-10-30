@@ -15,8 +15,11 @@ public:
 	void init(LoginWindow* loginWindow, RegisterWindow* registerWindow);
 	~Controller();
 	void handleGetValidateCodeSuccess(QString data);
+
 public slots:
 	void slotGetValidateCode();
+	void slotHttpFinished(MODULE module, ID id, ERRORCODE code, QString data);
+    void slotRegistUser();
 private:
 	friend class Singleton<Controller>;
 	Controller();
