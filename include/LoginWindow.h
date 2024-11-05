@@ -28,7 +28,11 @@
 #include <QApplication>
 #include <QLayout>
 #include <qlineedit.h>
-class LoginWindow : public QWidget
+#include <MoveableWidget.h>
+#include "Singleton.h"
+class Controller;
+
+class LoginWindow : public MoveableWidget
 {
     Q_OBJECT
 
@@ -37,17 +41,14 @@ public:
     void initUI();
     void initConnect();
     ~LoginWindow();
-protected:
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    
+    bool judgeRegistInfoComplete();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    QPoint cur_pos;
+    friend class Controller;
     QMenu contextMenu;
     QAction* reloadQssAction;
     QLabel* titleLabel;

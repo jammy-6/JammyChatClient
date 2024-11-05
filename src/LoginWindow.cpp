@@ -8,7 +8,7 @@
 #include <QLineEdit>
 #include <QGraphicsDropShadowEffect>
 LoginWindow::LoginWindow(QWidget *parent) :
-    QWidget(parent)
+    MoveableWidget(parent)
 {
     initUI();
     initConnect();
@@ -82,7 +82,6 @@ void LoginWindow::initUI() {
     mainLayout->addLayout(passwordLayout);
 
     ///忘记密码
-
     forgetPasswordBtn = new QPushButton;
     forgetPasswordBtn->setObjectName("forgetPasswordBtn");
     forgetPasswordBtn->setText(QString("忘记密码"));
@@ -128,16 +127,15 @@ void LoginWindow::reloadQss()
     qApp->setStyleSheet(styleSheet);
 }
 
-//鼠标左击更新坐标值
-void LoginWindow::mousePressEvent(QMouseEvent *event){
-    cur_pos = event->globalPos()-pos();
+bool LoginWindow::judgeRegistInfoComplete() {
+    if (userEdit->text().isEmpty()) {
+        return false;
+    }
+    if (passwordEdit->text().isEmpty()) {
+        return false;
+    }
+    return true;
 }
-
-//鼠标左击并移动更新窗体位置
-void LoginWindow::mouseMoveEvent(QMouseEvent *event){
-    move(event->globalPos()-cur_pos);
-}
-
 LoginWindow::~LoginWindow()
 {
 
