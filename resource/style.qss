@@ -1,4 +1,6 @@
 QWidget#registerWindow,
+QWidget#registerSuccessHintWindow,
+QWidget#resetPasswordWindow,
 QWidget#loginWindow{
 	background-color: rgb(245,245,245);
 	border:1px solid white;
@@ -12,10 +14,48 @@ QLabel#titlePhotoLabel{
 QPushButton#forgetPasswordBtn{
 	background:transparent;
 }
+QPushButton#forgetPasswordBtn:hover{
+	color:blue;
+}
+
 
 QLabel#msgHintLabel[status="error"]{
 	color:red;
 }
 QLabel#msgHintLabel[status="normal"]{
 	color:green;
+}
+
+
+QPushButton#resetPasswordVisible,
+QPushButton#registerPasswordVisible,
+QPushButton#registerConfirmPasswordVisible
+{
+	border:none;
+	background-color: transparent;
+}
+
+QPushButton#resetPasswordVisible:hover:checked,
+QPushButton#registerPasswordVisible:hover:checked,
+QPushButton#registerConfirmPasswordVisible:hover:checked
+{
+	border-image: url(:/RegisterWindow/visible_hover.png);
+}
+QPushButton#resetPasswordVisible:!hover:checked,
+QPushButton#registerPasswordVisible:!hover:checked,
+QPushButton#registerConfirmPasswordVisible:!hover:checked
+{
+	border-image: url(:/RegisterWindow/visible.png);
+}
+QPushButton#resetPasswordVisible:hover:!checked,
+QPushButton#registerPasswordVisible:hover:!checked,
+QPushButton#registerConfirmPasswordVisible:hover:!checked
+{
+	border-image: url(:/RegisterWindow/unvisible_hover.png);
+}
+QPushButton#resetPasswordVisible:!hover:!checked,
+QPushButton#registerPasswordVisible:!hover:!checked,
+QPushButton#registerConfirmPasswordVisible:!hover:!checked
+{
+	border-image: url(:/RegisterWindow/unvisible.png);
 }

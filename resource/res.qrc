@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>LoginWindow/titleLabel.png</file>
+		<file>RegisterWindow/unvisible.png</file>
+		<file>RegisterWindow/unvisible_hover.png</file>
+		<file>RegisterWindow/visible.png</file>
+		<file>RegisterWindow/visible_hover.png</file>
     </qresource>
 </RCC>
