@@ -32,8 +32,7 @@ class CustomWidgetLabel_LineEdit : public QWidget {
     Q_OBJECT
 public:
     CustomWidgetLabel_LineEdit(QWidget*parent = nullptr):QWidget(parent) {
-        
-        QHBoxLayout* mainLayout = new QHBoxLayout;
+        mainLayout = new QHBoxLayout;
         mainLayout->setSpacing(4);
         mainLayout->setContentsMargins(0, 0, 0, 0);
         mainLayout->setSizeConstraint(QLayout::SetFixedSize);
@@ -45,7 +44,7 @@ public:
         mainLayout->addWidget(lineEdit);
         this->setLayout(mainLayout);
     }
-    
+    QHBoxLayout* mainLayout;
     QLabel *label;
     QLineEdit *lineEdit;
 };
