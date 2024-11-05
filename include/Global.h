@@ -6,12 +6,18 @@
 #include "Config.h"
 
 enum MODULE {
-	MOUDLE_REGISTER = 0,
+	MODULE_REGISTER = 0,
+	MODULE_RESET_PASSWORD = 1,
+	MODULE_LOGIN = 2,
+
 };
 
 enum ID {
-	ID_GET_VALIDATE_CODE = 0,
-	ID_USER_REGISTER = 1,
+	ID_REGISTER_GET_VALIDATE_CODE = 0,
+	ID_RESET_GET_VALIDATE_CODE = 1,
+	ID_USER_REGISTER = 2,
+	ID_RESET_PASSWORD = 3,
+	ID_USER_LOGIN = 4,
 };
 
 enum ERRORCODE {
@@ -30,4 +36,7 @@ const QString errorJsonParse = "Json解析错误！";
 const QString hintGetValidateCodeSuccess = "获取验证码成功！";
 const QString hintRegisterProcess = "正在为您注册中，请稍后...";
 const QString hintRegisterSuccess = "注册成功！";
+const QString registerSuccessHintWindow = "注册成功,5s后返回登录界面，\n可点击返回按钮直接返回登录界面";
+const QString hintResetPasswordProcess = "正在为您重置密码中，请稍后...";
+const QString hintResetPasswordSuccessReturn = "重置成功，3s后将自动返回至登录界面...";
 #endif // ! 
