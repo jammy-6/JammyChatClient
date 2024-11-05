@@ -3,10 +3,11 @@
 #include "LoginWindow.h"
 #include "RegisterWindow.h"
 #include "HttpManager.h"
+#include "RegisterSuccessHintWindow.h"
 #include <memory>
 #include "Controller.h"
 #include "ConfigMgr.h"
-
+#include "ResetPasswordWindow.h"
 ConfigMgr gConfigMgr;
 
 int main(int argc, char *argv[])
@@ -15,10 +16,12 @@ int main(int argc, char *argv[])
 
     LoginWindow loginWindow;
     RegisterWindow registerWindow;
-    
+    RegisterSuccessHintWindow registerSuccessHintWindow;
+    ResetPasswordWindow resetPasswordWindow;
+
     HttpManager::GetInstance();
-    Controller::GetInstance()->init(&loginWindow,&registerWindow);
-    loginWindow.show();
-    registerWindow.show();
+    Controller::GetInstance()->init(&loginWindow,&registerWindow,&registerSuccessHintWindow,&resetPasswordWindow);
+
+
     return a.exec();
 }
