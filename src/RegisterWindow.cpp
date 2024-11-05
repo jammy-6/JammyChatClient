@@ -7,8 +7,9 @@
 #include <QStyleOption>
 #include <QLineEdit>
 #include <QGraphicsDropShadowEffect>
+
 RegisterWindow::RegisterWindow(QWidget *parent) :
-    QWidget(parent)
+    MoveableWidget(parent)
 {
     initUI();
     initConnect();
@@ -25,9 +26,11 @@ void RegisterWindow::initConnect() {
         QRegularExpressionMatch match = regex.match(text);
         if (match.hasMatch()) {
             updateMsgHint(registerEmail->lineEdit, "", true);
+            getValidateCodeBtn->setEnabled(true);
         }
         else {
             updateMsgHint(registerEmail->lineEdit, errorMailFormat, false);
+            getValidateCodeBtn->setEnabled(false);
         }
      });
 }
@@ -124,12 +127,48 @@ void RegisterWindow::initUI() {
     registerPassword->label->setObjectName("registerPasswordLabel");
     registerPassword->lineEdit->setObjectName("registerPasswordEdit");
     registerPassword->label->setText(QString("密码："));
+    registerPassword->lineEdit->setEchoMode(QLineEdit::Password);
+    registerPasswordVisible = new QPushButton;
+    registerPasswordVisible->setObjectName("registerPasswordVisible");
+    registerPasswordVisible->setFixedSize(30, 30);
+    registerPasswordVisible->setCheckable(true);
+    connect(registerPasswordVisible, &QPushButton::toggled, [this](bool checked) {
+        if (checked) {
+            registerPassword->lineEdit->setEchoMode(QLineEdit::Normal);
+        }
+        else {
+            registerPassword->lineEdit->setEchoMode(QLineEdit::Password);
+        }
+        });
+    registerPassword->lineEdit->setFixedWidth(
+        registerPassword->lineEdit->sizeHint().width() - registerPasswordVisible->size().width() - registerPassword->layout()->spacing()
+    );
+    registerPassword->mainLayout->addWidget(registerPasswordVisible);
+
     mainLayout->addWidget(registerPassword, 0, Qt::AlignHCenter);
     ///确认密码
     registerConfirmPassword = new CustomWidgetLabel_LineEdit;
     registerConfirmPassword->label->setObjectName("registerConfirmPasswordLabel");
     registerConfirmPassword->lineEdit->setObjectName("registerConfirmPasswordEdit");
     registerConfirmPassword->label->setText(QString("确认密码："));
+    registerConfirmPassword->lineEdit->setEchoMode(QLineEdit::Password);
+    registerConfirmPasswordVisible = new QPushButton;
+    registerConfirmPasswordVisible->setFixedSize(30, 30);
+    registerConfirmPasswordVisible->setObjectName("registerConfirmPasswordVisible");
+    registerConfirmPasswordVisible->setCheckable(true);
+    connect(registerConfirmPasswordVisible, &QPushButton::toggled, [this](bool checked) {
+        if (checked) {
+            registerConfirmPassword->lineEdit->setEchoMode(QLineEdit::Normal);
+        }
+        else {
+            registerConfirmPassword->lineEdit->setEchoMode(QLineEdit::Password);
+        }
+        });
+    registerConfirmPassword->lineEdit->setFixedWidth(
+        registerPassword->lineEdit->sizeHint().width() - registerConfirmPasswordVisible->size().width() - registerPassword->layout()->spacing()
+    );
+    registerConfirmPassword->mainLayout->addWidget(registerConfirmPasswordVisible);
+
     ///让确认密码的lineEdit与前面的lineEdit左对齐，更美观些
     QSpacerItem* rightPushSpacerItem1 = new QSpacerItem(
          registerConfirmPassword->label->sizeHint().width()- registerPassword->label->sizeHint().width()
@@ -152,10 +191,11 @@ void RegisterWindow::initUI() {
     registerValidateCodeEdit = new QLineEdit;
     registerValidateCodeEdit->setObjectName("registerValidateCodeEdit");
     validateCodeLayout->addWidget(registerValidateCodeEdit);
-    getValidateCodeBtn = new QPushButton;
+    getValidateCodeBtn = new CustomTimerBtn;
     getValidateCodeBtn->setText(QString("获取"));
     getValidateCodeBtn->setFixedWidth(60);
     getValidateCodeBtn->setObjectName("getValidateCodeBtn");
+    getValidateCodeBtn->setEnabled(false);
     validateCodeLayout->addWidget(getValidateCodeBtn);
     registerValidateCodeEdit->setFixedSize(registerValidateCodeEdit->sizeHint().width()- getValidateCodeBtn->width()- validateCodeLayout->spacing(), 30);
     QSpacerItem* rightPushSpacerItem2 = new QSpacerItem(
@@ -211,6 +251,7 @@ void RegisterWindow::reloadQss()
     QFile file(path);
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
+    qDebug() << styleSheet;
     qApp->setStyleSheet(styleSheet);
 }
 ///更新提示信息
@@ -227,16 +268,6 @@ void RegisterWindow::updateMsgHint(QWidget* widget,QString hint, bool status) {
     msgHintLabel->setText(hint);
    
     
-}
-
-//鼠标左击更新坐标值
-void RegisterWindow::mousePressEvent(QMouseEvent *event){
-    cur_pos = event->globalPos()-pos();
-}
-
-//鼠标左击并移动更新窗体位置
-void RegisterWindow::mouseMoveEvent(QMouseEvent *event){
-    move(event->globalPos()-cur_pos);
 }
 
 RegisterWindow::~RegisterWindow()

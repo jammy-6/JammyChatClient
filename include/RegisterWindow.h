@@ -30,10 +30,10 @@
 #include <QLineEdit>
 #include "CustomerWidget.h"
 #include "Global.h"
-
-
+#include "CustomTimerBtn.h"
+#include "MoveableWidget.h"
 class Controller;
-class RegisterWindow : public QWidget
+class RegisterWindow : public MoveableWidget
 {
     Q_OBJECT
 
@@ -46,10 +46,7 @@ public:
     bool judgeInfo();
     bool judgeRegistInfoComplete();
     ~RegisterWindow();
-protected:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    
+
 
 protected:
     void paintEvent(QPaintEvent* event);
@@ -57,7 +54,7 @@ protected:
 
 private:
     friend class Controller;
-    QPoint cur_pos;
+
     QMenu contextMenu;
     QAction* reloadQssAction;
     QLabel* titleLabel;
@@ -66,7 +63,9 @@ private:
     CustomWidgetLabel_LineEdit *registerUser;
     CustomWidgetLabel_LineEdit *registerEmail;
     CustomWidgetLabel_LineEdit *registerPassword;
+    QPushButton* registerPasswordVisible;
     CustomWidgetLabel_LineEdit *registerConfirmPassword;
+    QPushButton* registerConfirmPasswordVisible;
     //QLabel* registerUserLabel;
     //QLineEdit* registerUserEdit;
     //QLabel* registerEmailLabel;
@@ -77,7 +76,7 @@ private:
     //QLineEdit* registerConfirmPasswordEdit;
     QLabel* registerValidateCodeLabel;
     QLineEdit* registerValidateCodeEdit;
-    QPushButton* getValidateCodeBtn;
+    CustomTimerBtn* getValidateCodeBtn;
 
     QPushButton* confirmBtn;
     QPushButton* cancelBtn;
