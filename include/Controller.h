@@ -21,6 +21,8 @@ public:
 public slots:
 	/// 通用界面跳转槽函数
 	void slotHideAndShow(QWidget* hideWidget, QWidget* showWidget);
+	/// TcpMgr类连接服务器槽函数
+	void slotTcpConnect(bool success);
 	/// http响应槽函数
 	void slotHttpFinished(MODULE module, ID id, ERRORCODE code, QString data);
 	/// 注册或重置密码界面获取验证码槽函数

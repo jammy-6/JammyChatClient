@@ -25,6 +25,14 @@ enum ERRORCODE {
 	ERROR_NETWORK,///网络错误
 	ERROR_JSON_PARSE_FAILED,///JSON解析失败
 };
+
+typedef struct ServerInfo {
+	QString Host;
+	QString Port;
+	QString Uid;
+	QString Token;
+} ServerInfo;
+
 const QString errorUserNameEmpty = "用户名称栏为空！";
 const QString errorUserEmailEmpty = "用户邮箱栏为空！";
 const QString errorUserPasswordEmpty = "用户密码栏为空！";

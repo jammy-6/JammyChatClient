@@ -6,6 +6,7 @@
 #include "nlohmann/json.hpp"
 #include <functional>
 #include <QPoint>
+#include "TcpMgr.h"
 using json = nlohmann::json;
 Controller::~Controller() {
 
@@ -48,6 +49,15 @@ void Controller::slotHttpFinished(MODULE module, ID id, ERRORCODE code, QString 
 			if (code == 0) {
 				std::cout << "获取返回结果" << data.toStdString() << std::endl;
 				std::cout << " 用户登录成功！ " << std::endl;
+				ServerInfo si;
+				json response_json = json::parse(data.toStdString());
+				si.Host = QString::fromStdString(response_json["host"]);
+				si.Port = QString::fromStdString(response_json["port"]);
+				si.Uid = QString::fromStdString(response_json["uid"]);
+				si.Token = QString::fromStdString(response_json["token"]);
+				qDebug() << "user is " << "user" << " uid is " << si.Uid << " host is "
+					<< si.Host << " Port is " << si.Port << " Token is " << si.Token;
+				TcpMgr::GetInstance()->slot_tcp_connect(si);
 				///获取chatserver ip 以及 port
 				///提示用户登录成功
 				/// 
@@ -135,6 +145,8 @@ void Controller::init(LoginWindow* loginWindow, RegisterWindow* registerWindow, 
 	this->resetPasswordWindow_ = resetPasswordWindow;
 	loginWindow_->show();
 	auto self = shared_from_this();
+	///TCP连接成功后槽函数处理
+	connect(TcpMgr::GetInstance().get(), &TcpMgr::sig_con_success, this, &Controller::slotTcpConnect);
 	///处理http请求连接
 	QObject::connect(HttpManager::GetInstance().get(), &HttpManager::signalHttpFinish,this,&Controller::slotHttpFinished);
 	///注册面板
@@ -186,4 +198,21 @@ void Controller::slotUserLogin() {
 	HttpManager::GetInstance()->postHttpRequest(QUrl(QString::fromStdString(url)), request_json, MODULE::MODULE_LOGIN, ID_USER_LOGIN);
 	///界面提示正在登录中
 
+}
+
+void Controller::slotTcpConnect(bool success) {
+	if (success) {
+		//(tr("聊天服务连接成功，正在登录..."), true);
+		//QJsonObject jsonObj;
+		//jsonObj["uid"] = _uid;
+		//jsonObj["token"] = _token;
+		//QJsonDocument doc(jsonObj);
+		//QString jsonString = doc.toJson(QJsonDocument::Indented);
+		////发送tcp请求给chat server
+		//TcpMgr::GetInstance()->sig_send_data(ReqId::ID_CHAT_LOGIN, jsonString);
+	}
+	else {
+		//showTip(tr("网络异常"), false);
+		//enableBtn(true);
+	}
 }
