@@ -8,19 +8,23 @@
 #include "Controller.h"
 #include "ConfigMgr.h"
 #include "ResetPasswordWindow.h"
+#include "ChatWindow.h"
 ConfigMgr gConfigMgr;
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    LoginWindow loginWindow;
-    RegisterWindow registerWindow;
-    RegisterSuccessHintWindow registerSuccessHintWindow;
-    ResetPasswordWindow resetPasswordWindow;
+    ChatWindow chatWindow;
+    chatWindow.show();
 
-    HttpManager::GetInstance();
-    Controller::GetInstance()->init(&loginWindow,&registerWindow,&registerSuccessHintWindow,&resetPasswordWindow);
+    //LoginWindow loginWindow;
+    //RegisterWindow registerWindow;
+    //RegisterSuccessHintWindow registerSuccessHintWindow;
+    //ResetPasswordWindow resetPasswordWindow;
+
+    //HttpManager::GetInstance();
+    //Controller::GetInstance()->init(&loginWindow,&registerWindow,&registerSuccessHintWindow,&resetPasswordWindow);
 
 
     return a.exec();

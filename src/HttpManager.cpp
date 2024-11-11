@@ -1,4 +1,4 @@
-#include "HttpManager.h"
+﻿#include "HttpManager.h"
 #include <regex>
 HttpManager::HttpManager() {
 

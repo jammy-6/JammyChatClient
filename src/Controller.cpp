@@ -1,4 +1,4 @@
-#pragma execution_character_set("utf-8")
+﻿#pragma execution_character_set("utf-8")
 #include "Controller.h"
 #include <QPushButton>
 #include "Global.h"
@@ -9,61 +9,33 @@
 #include "TcpMgr.h"
 using json = nlohmann::json;
 Controller::~Controller() {
-
+	
 
 }
 Controller::Controller() {
+	allHanlders_[ID_REGISTER_GET_VALIDATE_CODE] 
+		= std::bind(&Controller::handleRegisterGetValideCode,this,std::placeholders::_1);
+	allHanlders_[ID_RESET_GET_VALIDATE_CODE]
+		= std::bind(&Controller::handleResetPasswordGetValideCode, this, std::placeholders::_1);
+	allHanlders_[ID_RESET_PASSWORD]
+		= std::bind(&Controller::handleResetPassword, this, std::placeholders::_1);
+	allHanlders_[ID_USER_REGISTER]
+		= std::bind(&Controller::handleUserRegister, this, std::placeholders::_1);
 
+	allHanlders_[ID_REGISTER_GET_VALIDATE_CODE]
+		= std::bind(&Controller::handleRegisterGetValideCode, this, std::placeholders::_1);
 	
 }
 
 void Controller::slotHttpFinished(MODULE module, ID id, ERRORCODE code, QString data) {
 	if (code == ERRORCODE::SUCCESS) {
-		std::cout << "Http Success : " << data.toStdString() << std::endl;
-		switch (id) {
-		case ID::ID_REGISTER_GET_VALIDATE_CODE: ///验证码获取成功
-			std::cout << " 获取验证码成功！ " << std::endl;
-			this->handleGetValidateCodeSuccess(module, data);
-			break;
-		case ID::ID_RESET_GET_VALIDATE_CODE:
-			std::cout << " 获取验证码成功！ " << std::endl;
-			this->handleGetValidateCodeSuccess(module, data);
-			break;
-		case ID::ID_USER_REGISTER:
-
-			if (code == 0) {
-				std::cout << "获取返回结果" << data.toStdString() << std::endl;
-				std::cout << " 用户注册成功！ " << std::endl;
-				registerWindow_->updateMsgHint(nullptr, hintRegisterSuccess, true);
-			}
-			break;
-		case ID::ID_RESET_PASSWORD:
-			if (code == 0) {
-				std::cout << "获取返回结果" << data.toStdString() << std::endl;
-				std::cout << " 用户重置密码成功！ " << std::endl;
-				resetPasswordWindow_->updateMsgHint(nullptr, hintResetPasswordSuccessReturn, true);
-			}
-			break;
-		
-		case ID::ID_USER_LOGIN:
-			if (code == 0) {
-				std::cout << "获取返回结果" << data.toStdString() << std::endl;
-				std::cout << " 用户登录成功！ " << std::endl;
-				ServerInfo si;
-				json response_json = json::parse(data.toStdString());
-				si.Host = QString::fromStdString(response_json["host"]);
-				si.Port = QString::fromStdString(response_json["port"]);
-				si.Uid = QString::fromStdString(response_json["uid"]);
-				si.Token = QString::fromStdString(response_json["token"]);
-				qDebug() << "user is " << "user" << " uid is " << si.Uid << " host is "
-					<< si.Host << " Port is " << si.Port << " Token is " << si.Token;
-				TcpMgr::GetInstance()->slot_tcp_connect(si);
-				///获取chatserver ip 以及 port
-				///提示用户登录成功
-				/// 
-			}
-			break;
-		};
+		qDebug() << "HTTP请求成功返回，数据为: " << data;
+		nlohmann::json responseJson = nlohmann::json::parse(data.toStdString());
+		///回调函数进行处理
+		allHanlders_[id](responseJson);
+	}
+	else {
+		qDebug() << "HTTP请求失败，数据为: " << data;
 	}
 }
 void Controller::slotGetValidateCode(MODULE module, ID id) {
@@ -110,6 +82,7 @@ void Controller::slotRegistUser(){
 
 void Controller::slotResetPassword() {
 	if (!resetPasswordWindow_->judgeResetInfoComplete()) {
+		registerWindow_->updateMsgHint(nullptr, hintResetPasswordImformationNotComplete, false);
 		return;
 	}
 	json request_json;
@@ -133,7 +106,6 @@ void Controller::slotHideAndShow(QWidget* hideWidget, QWidget* showWidget) {
 		QPoint newPos = center - QPoint(showSize.width() / 2, showSize.height() / 2);
 		showWidget->move(QPoint(newPos));
 		hideWidget->hide();
-		
 		showWidget->show();
 		//showWidget->move(newPos);
 		
@@ -147,6 +119,8 @@ void Controller::init(LoginWindow* loginWindow, RegisterWindow* registerWindow, 
 	auto self = shared_from_this();
 	///TCP连接成功后槽函数处理
 	connect(TcpMgr::GetInstance().get(), &TcpMgr::sig_con_success, this, &Controller::slotTcpConnect);
+	connect(TcpMgr::GetInstance().get(), &TcpMgr::sig_recv_data, this, &Controller::slotTcpRecvMsg);
+
 	///处理http请求连接
 	QObject::connect(HttpManager::GetInstance().get(), &HttpManager::signalHttpFinish,this,&Controller::slotHttpFinished);
 	///注册面板
@@ -167,23 +141,7 @@ void Controller::init(LoginWindow* loginWindow, RegisterWindow* registerWindow, 
 
 }
 
-void Controller::handleGetValidateCodeSuccess(MODULE module,QString data) {
-	if (module == MODULE::MODULE_REGISTER) {
-		nlohmann::json responseBody = nlohmann::json::parse(data.toStdString());
-		if (responseBody.contains("error_code") && responseBody["error_code"] == 0) {
-			registerWindow_->updateMsgHint(nullptr, hintGetValidateCodeSuccess, true);
-		}
-		std::cout << data.toStdString() << std::endl;
-	}
-	else if (module == MODULE::MODULE_RESET_PASSWORD) {
-		nlohmann::json responseBody = nlohmann::json::parse(data.toStdString());
-		if (responseBody.contains("error_code") && responseBody["error_code"] == 0) {
-			resetPasswordWindow_->updateMsgHint(nullptr, hintGetValidateCodeSuccess, true);
-		}
-		std::cout << data.toStdString() << std::endl;
-	}
 
-}
 void Controller::slotUserLogin() {
 	if (!loginWindow_->judgeRegistInfoComplete()) {
 		///界面提示错误信息
@@ -199,20 +157,90 @@ void Controller::slotUserLogin() {
 	///界面提示正在登录中
 
 }
-
+void Controller::slotTcpRecvMsg(MSG_IDS reqId, QString data) {
+	qDebug() << "接收到来自TCPMgr提取出来的消息：id =" << (int)reqId << ", data = " << data;
+}
 void Controller::slotTcpConnect(bool success) {
 	if (success) {
 		//(tr("聊天服务连接成功，正在登录..."), true);
-		//QJsonObject jsonObj;
-		//jsonObj["uid"] = _uid;
-		//jsonObj["token"] = _token;
-		//QJsonDocument doc(jsonObj);
-		//QString jsonString = doc.toJson(QJsonDocument::Indented);
+		loginWindow_->updateMsgHint(nullptr, hintConnectChatServerSuccess, true);
+		json responseJson;
+		responseJson["uid"] = connectChatServer.Uid.toStdString();
+		responseJson["token"] = connectChatServer.Token.toStdString();
 		////发送tcp请求给chat server
-		//TcpMgr::GetInstance()->sig_send_data(ReqId::ID_CHAT_LOGIN, jsonString);
+		TcpMgr::GetInstance()->sig_send_data(MSG_IDS::MSG_LOGIN, QString::fromStdString(responseJson.dump()));
 	}
 	else {
-		//showTip(tr("网络异常"), false);
-		//enableBtn(true);
+		loginWindow_->updateMsgHint(nullptr, hintConnectChatServerFailed, false);
 	}
+}
+
+void Controller::handleRegisterGetValideCode(nlohmann::json responseJson) {
+	int errorcode = responseJson["error_code"];
+	if (errorcode != ERRORCODE::SUCCESS) {
+		qDebug() << "注册模块：获取验证码失败，错误码为" << errorcode;
+		registerWindow_->updateMsgHint(nullptr, "验证码获取失败", false);
+		return;
+	}
+	qDebug() << "注册模块：获取验证码成功！";
+	registerWindow_->updateMsgHint(nullptr, hintGetValidateCodeSuccess, true);
+}
+
+void Controller::handleResetPasswordGetValideCode(nlohmann::json responseJson) {
+	int errorcode = responseJson["error_code"];
+	if (errorcode != ERRORCODE::SUCCESS) {
+		qDebug() << "重置密码模块：获取验证码失败，错误码为" << errorcode;
+		resetPasswordWindow_->updateMsgHint(nullptr, "验证码获取失败", false);
+		return;
+	}
+	qDebug() << "重置密码模块：获取验证码成功！";
+	resetPasswordWindow_->updateMsgHint(nullptr, hintGetValidateCodeSuccess, true);
+}
+
+void Controller::handleUserRegister(nlohmann::json responseJson) {
+	int errorcode = responseJson["error_code"];
+	if (errorcode != ERRORCODE::SUCCESS) {
+		qDebug() << "注册模块：用户注册失败，错误码为" << errorcode;
+		registerWindow_->updateMsgHint(nullptr, "用户注册失败", false);
+		return;
+	}
+	qDebug() << "注册模块：用户注册成功！";
+	registerWindow_->updateMsgHint(nullptr, hintRegisterSuccess, true);
+	slotHideAndShow(registerWindow_, registerSuccessHintWindow_);
+}
+
+void Controller::handleResetPassword(nlohmann::json responseJson) {
+	int errorcode = responseJson["error_code"];
+	if (errorcode != ERRORCODE::SUCCESS) {
+		qDebug() << " 用户重置密码失败，错误码为！ " << errorcode;
+		resetPasswordWindow_->updateMsgHint(nullptr, hintResetPasswordFailedReturn, false);
+		return;
+	}else{
+		qDebug() << " 用户重置密码成功！ ";
+		qDebug() << "获取返回结果" << QString::fromStdString(responseJson.dump());
+		resetPasswordWindow_->updateMsgHint(nullptr, hintResetPasswordSuccessReturn, true);
+	}
+}
+
+void Controller::handleUserLogin(nlohmann::json responseJson) {
+	ServerInfo si;
+	int errorcode = responseJson["error_code"];
+	QString data = QString::fromStdString(responseJson.dump());
+	if (errorcode != ERRORCODE::SUCCESS) {
+		qDebug() << "用户登录失败，错误码为！ " << errorcode;
+		loginWindow_->updateMsgHint(nullptr, hintResetPasswordFailedReturn, false);
+		return;
+	}
+	else {
+		qDebug() << "用户登录成功，响应数据为：" << data;
+		si.Host = QString::fromStdString(responseJson.at("host").get<std::string>());
+		si.Port = QString::fromStdString(responseJson.at("port").get<std::string>());
+		si.Uid = QString::fromStdString(responseJson.at("uid").get<std::string>());
+		si.Token = QString::fromStdString(responseJson.at("token").get<std::string>());
+		///提示用户获取聊天服务器IP及PORT成功
+		loginWindow_->updateMsgHint(nullptr, hintGetChatServerFailed, true);
+		connectChatServer = si;
+		TcpMgr::GetInstance()->slot_tcp_connect(connectChatServer);
+	}
+
 }

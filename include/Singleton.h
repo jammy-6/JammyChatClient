@@ -1,4 +1,4 @@
-#ifndef SINGLETON_H
+﻿#ifndef SINGLETON_H
 #define SINGLETON_H
 
 
@@ -24,10 +24,10 @@ public:
         return _instance;
     }
     void PrintAddress() {
-        std::cout << _instance.get() << endl;
+        qDebug() << _instance.get() << endl;
     }
     ~Singleton() {
-        std::cout << "this is singleton destruct" << std::endl;
+        qDebug() << "this is singleton destruct" ;
     }
 };
 

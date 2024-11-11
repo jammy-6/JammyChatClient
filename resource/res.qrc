@@ -5,5 +5,15 @@
 		<file>RegisterWindow/unvisible_hover.png</file>
 		<file>RegisterWindow/visible.png</file>
 		<file>RegisterWindow/visible_hover.png</file>
+		<file>ChatWindow/chatBtn_checked.png</file>
+		<file>ChatWindow/chatBtn.png</file>
+		<file>ChatWindow/chatBtn_hover.png</file>
+		<file>ChatWindow/chatBtn_checked_hover.png</file>
+		<file>ChatWindow/contactListBtn_checked.png</file>
+		<file>ChatWindow/contactListBtn.png</file>
+		<file>ChatWindow/contactListBtn_hover.png</file>
+		<file>ChatWindow/contactListBtn_checked_hover.png</file>
+		<file>ChatWindow/addFriendBtn.png</file>
+		<file>ChatWindow/addFriendBtn_hover.png</file>
     </qresource>
 </RCC>

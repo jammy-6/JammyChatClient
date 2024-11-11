@@ -59,3 +59,91 @@ QPushButton#registerConfirmPasswordVisible:!hover:!checked
 {
 	border-image: url(:/RegisterWindow/unvisible.png);
 }
+
+
+/* 聊天界面 */
+
+QWidget#sideBar{
+	background-color: rgb(46,46,46);
+/*  border:1px solid black;
+	border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;*/
+}
+
+QLabel#iconLabel{
+	background-color: white;
+}
+
+/* sidebar 的按钮特殊设置 */
+
+QPushButton#chatBtn,
+QPushButton#contactListBtn,
+QPushButton#addFriendBtn
+{
+	border:none;
+	background-color: transparent;
+}
+
+QPushButton#chatBtn:hover:checked
+{
+	border-image: url(:/ChatWindow/chatBtn_checked_hover.png);
+}
+QPushButton#chatBtn:!hover:checked
+{
+	border-image: url(:/ChatWindow/chatBtn_checked.png);
+}
+QPushButton#chatBtn:hover:!checked
+{
+	border-image: url(:/ChatWindow/chatBtn_hover.png);
+}
+QPushButton#chatBtn:!hover:!checked
+{
+	border-image: url(:/ChatWindow/chatBtn.png);
+}
+
+QPushButton#contactListBtn:hover:checked
+{
+	border-image: url(:/ChatWindow/contactListBtn_checked_hover.png);
+}
+
+QPushButton#contactListBtn:!hover:checked
+{
+	border-image: url(:/ChatWindow/contactListBtn_checked.png);
+}
+
+QPushButton#contactListBtn:hover:!checked
+{
+	border-image: url(:/ChatWindow/contactListBtn_hover.png);
+}
+
+QPushButton#contactListBtn:!hover:!checked
+{
+	border-image: url(:/ChatWindow/contactListBtn.png);
+}
+
+QWidget#searchWidget{
+	background-color: rgb(247,247,247);
+	/*border-bottom: 1px solid black;*/
+}
+QListWidget#friendWidget{
+	border:none;
+}
+
+QPushButton#addFriendBtn:hover
+{
+	border-image: url(:/ChatWindow/addFriendBtn_hover.png);
+}
+
+QPushButton#addFriendBtn
+{
+	border-image: url(:/ChatWindow/addFriendBtn.png);
+}
+
+QWidget#chatWidget{
+	background-color: rgb(240,240,240);
+}
+
+
+
+
+

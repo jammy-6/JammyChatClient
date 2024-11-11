@@ -220,7 +220,6 @@ void ResetPasswordWindow::reloadQss()
     QFile file(path);
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
-    qDebug() << styleSheet;
     qApp->setStyleSheet(styleSheet);
 }
 ///更新提示信息

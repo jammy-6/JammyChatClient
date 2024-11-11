@@ -1,12 +1,14 @@
+﻿#pragma execution_character_set("utf-8")
 #include "ConfigMgr.h"
-
+#include <qdebug.h>
 ConfigMgr::ConfigMgr(){
     // 获取当前工作目录  
     // boost::filesystem::path current_path = boost::filesystem::current_path();
     // // 构建config.ini文件的完整路径  
     // boost::filesystem::path config_path = current_path / "config.ini";
     std::string config_path = PROJECT_DIR + std::string("/Config.ini");
-    std::cout << "Config path: " << config_path << std::endl;
+    qDebug() << "读取到配置文件如下：-----------------------";
+    qDebug()<<QString::fromStdString(config_path);
 
     // 使用Boost.PropertyTree来读取INI文件  
     boost::property_tree::ptree pt;
@@ -35,9 +37,10 @@ ConfigMgr::ConfigMgr(){
     for (const auto& section_entry : _config_map) {
         const std::string& section_name = section_entry.first;
         SectionInfo section_config = section_entry.second;
-        std::cout << "[" << section_name << "]" << std::endl;
+        qDebug() << "[" << QString::fromStdString(section_name) << "]";
         for (const auto& key_value_pair : section_config._section_datas) {
-            std::cout << key_value_pair.first << "=" << key_value_pair.second << std::endl;
+            qDebug() << QString::fromStdString(key_value_pair.first)
+                << "=" << QString::fromStdString(key_value_pair.second);
         }
     }
 

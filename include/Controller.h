@@ -16,13 +16,14 @@ class Controller: public QObject,public Singleton<Controller>,public enable_shar
 public:
 	void init(LoginWindow* loginWindow, RegisterWindow* registerWindow, RegisterSuccessHintWindow* registerSuccessHintWindow, ResetPasswordWindow* resetPasswordWindow);
 	~Controller();
-	void handleGetValidateCodeSuccess(MODULE module,QString data);
+
 
 public slots:
 	/// 通用界面跳转槽函数
 	void slotHideAndShow(QWidget* hideWidget, QWidget* showWidget);
 	/// TcpMgr类连接服务器槽函数
 	void slotTcpConnect(bool success);
+	void slotTcpRecvMsg(MSG_IDS reqId, QString data);
 	/// http响应槽函数
 	void slotHttpFinished(MODULE module, ID id, ERRORCODE code, QString data);
 	/// 注册或重置密码界面获取验证码槽函数
@@ -33,10 +34,19 @@ public slots:
 	void slotResetPassword();
 	///登录面板槽函数
 	void slotUserLogin();
+	
+
+	///对于slotHttpFinished以及TCPMgr会调用的回调函数
+	void handleRegisterGetValideCode(nlohmann::json);
+	void handleResetPasswordGetValideCode(nlohmann::json responseJson);
+	void handleUserRegister(nlohmann::json responseJson);
+	void handleResetPassword(nlohmann::json responseJson);
+	void handleUserLogin(nlohmann::json responseJson);
 private:
 	friend class Singleton<Controller>;
 	Controller();
-	
+	ServerInfo connectChatServer;
+	std::map<int, std::function<void(nlohmann::json)>> allHanlders_;
 	LoginWindow* loginWindow_;
 	RegisterWindow* registerWindow_;
 	RegisterSuccessHintWindow* registerSuccessHintWindow_;

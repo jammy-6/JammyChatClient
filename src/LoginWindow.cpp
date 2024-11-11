@@ -44,6 +44,11 @@ void LoginWindow::initUI() {
     titleLabel->setObjectName("titleLabel");
     titleLabel->setText(QString("Jammy通信客户端"));
     mainLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
+    msgHintLabel = new QLabel;
+    msgHintLabel->setObjectName("msgHintLabel");
+    msgHintLabel->setText(QString(""));
+    mainLayout->addWidget(msgHintLabel, 0, Qt::AlignHCenter);
+
     QSpacerItem* titleSpacer = new QSpacerItem(284, 10, QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
     mainLayout->addItem(titleSpacer);
     ///图片
@@ -105,6 +110,19 @@ void LoginWindow::initUI() {
     // 添加QAction到右键菜单
     contextMenu.addAction(reloadQssAction);
 
+}
+
+void LoginWindow::updateMsgHint(QWidget* widget, QString hint, bool status) {
+    ///这里的widget参数暂时没用到，可能以后会用到，先留着
+    if (status) {
+        msgHintLabel->setProperty("status", QString("normal"));
+    }
+    else {
+        msgHintLabel->setProperty("status", QString("error"));
+    }
+    msgHintLabel->style()->unpolish(msgHintLabel);
+    msgHintLabel->style()->polish(msgHintLabel);
+    msgHintLabel->setText(hint);
 }
 void LoginWindow::paintEvent(QPaintEvent* event){
     QStyleOption opt;

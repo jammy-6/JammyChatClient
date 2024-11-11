@@ -251,7 +251,6 @@ void RegisterWindow::reloadQss()
     QFile file(path);
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
-    qDebug() << styleSheet;
     qApp->setStyleSheet(styleSheet);
 }
 ///更新提示信息
@@ -266,8 +265,6 @@ void RegisterWindow::updateMsgHint(QWidget* widget,QString hint, bool status) {
     msgHintLabel->style()->unpolish(msgHintLabel);
     msgHintLabel->style()->polish(msgHintLabel);
     msgHintLabel->setText(hint);
-   
-    
 }
 
 RegisterWindow::~RegisterWindow()

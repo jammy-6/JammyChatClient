@@ -1,4 +1,4 @@
-#ifndef HTTPMANAGER_H
+﻿#ifndef HTTPMANAGER_H
 #define HTTPMANAGER_H
 
 

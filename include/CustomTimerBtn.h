@@ -1,4 +1,4 @@
-#ifndef  CUSTOMTIMERBTN_H
+﻿#ifndef  CUSTOMTIMERBTN_H
 #define CUSTOMTIMERBTN_H
 #include <qpushbutton.h>
 #include <qtimer.h>

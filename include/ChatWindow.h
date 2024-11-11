@@ -1,5 +1,5 @@
-﻿#ifndef REGISTERSUCCESSHINTWINDOW_H
-#define REGISTERSUCCESSHINTWINDOW_H
+﻿#ifndef CHATWINDOW_H
+#define CHATWINDOW_H
 
 #include <QWidget>
 #include <QMenu>
@@ -27,37 +27,47 @@
 #include <QFrame>
 #include <QApplication>
 #include <QLayout>
-#include <QPushbutton>
 #include <qlineedit.h>
-#include <QTimer>
-#include "MoveableWidget.h"
-class RegisterSuccessHintWindow : public MoveableWidget
+#include <MoveableWidget.h>
+#include <QListWidget>
+#include "Singleton.h"
+class Controller;
+
+class ChatWindow : public MoveableWidget
 {
     Q_OBJECT
 
 public:
-    explicit RegisterSuccessHintWindow(QWidget* parent = nullptr);
+    explicit ChatWindow(QWidget *parent = nullptr);
     void initUI();
     void initConnect();
-    ~RegisterSuccessHintWindow();
-
-
+    ~ChatWindow();
+    bool judgeRegistInfoComplete();
+    void updateMsgHint(QWidget* widget, QString hint, bool status);
 protected:
     void paintEvent(QPaintEvent* event) override;
-    void showEvent(QShowEvent* event) override;
-    void hideEvent(QHideEvent* event) override;
-signals:
-    void signalReturnLoginWindow();
+
 private:
+    friend class Controller;
 
-    QLabel* titleLabel;
-    QLabel* hintLabel;
-    QPushButton* returnBtn;
-    QTimer *timer_;
+    QWidget* sideBar;
+    QLabel* iconLabel;
+    QPushButton* chatBtn;
+    QPushButton* contactListBtn;
+
+    QWidget* contactListWidget;
+    QWidget* searchWidget;
+    QLineEdit* searchLineEdit;
+    QPushButton* addFriendBtn;
+    QListWidget* friendWidget;
+
+    QWidget* chatWidget;
+
+
 private slots:
+    void reloadQss();
     
-
 
 };
 
-#endif // !1
+#endif 

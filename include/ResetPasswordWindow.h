@@ -1,4 +1,4 @@
-#ifndef RESETPASSWORDWINDOW_H
+﻿#ifndef RESETPASSWORDWINDOW_H
 #define RESETPASSWORDWINDOW_H
 
 #include <QWidget>

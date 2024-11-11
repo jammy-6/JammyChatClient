@@ -1,4 +1,4 @@
-#pragma execution_character_set("utf-8")
+﻿#pragma execution_character_set("utf-8")
 #include "CustomTimerBtn.h"
 
 CustomTimerBtn::CustomTimerBtn(QWidget* parent) {
@@ -12,7 +12,7 @@ void CustomTimerBtn::slotTimeout() {
 	if (countdown_ <= 0) {
 		countdown_ = 10;
 		this->setEnabled(true);
-		this->setText(QString("��ȡ"));
+		this->setText(QString("获取"));
 		timer_->stop();
 		return;
 	}

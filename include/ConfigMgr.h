@@ -1,4 +1,4 @@
-#ifndef CONFIGMGR_H
+﻿#ifndef CONFIGMGR_H
 #define CONFIGMGR_H
 #include <map>
 #include "Global.h"
