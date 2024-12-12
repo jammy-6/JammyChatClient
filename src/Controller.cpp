@@ -24,6 +24,8 @@ Controller::Controller() {
 
 	allHanlders_[ID_REGISTER_GET_VALIDATE_CODE]
 		= std::bind(&Controller::handleRegisterGetValideCode, this, std::placeholders::_1);
+	allHanlders_[ID_USER_LOGIN]
+		= std::bind(&Controller::handleUserLogin, this, std::placeholders::_1);
 	
 }
 
@@ -91,8 +93,12 @@ void Controller::slotResetPassword() {
 	request_json["passwd"] = resetPasswordWindow_->resetPassword->lineEdit->text().toStdString();
 	request_json["code"] = resetPasswordWindow_->resetValidateCodeEdit->text().toStdString();
 	std::string url = "http://" + gConfigMgr["JammyGateServer"]["Ip"] + ":" + gConfigMgr["JammyGateServer"]["Port"] + "/user_reset_password";
+	resetPasswordWindow_->disableAllBtn(true);
+	resetPasswordWindow_->updateMsgHint(nullptr, hintResetPasswordProcess, true);
 	HttpManager::GetInstance()->postHttpRequest(QString::fromStdString(url), request_json, MODULE::MODULE_RESET_PASSWORD, ID::ID_RESET_PASSWORD);
-	registerWindow_->updateMsgHint(nullptr, hintResetPasswordProcess, true);
+	
+	
+
 	return;
 }
 void Controller::slotHideAndShow(QWidget* hideWidget, QWidget* showWidget) {
@@ -110,11 +116,12 @@ void Controller::slotHideAndShow(QWidget* hideWidget, QWidget* showWidget) {
 		//showWidget->move(newPos);
 		
 }
-void Controller::init(LoginWindow* loginWindow, RegisterWindow* registerWindow, RegisterSuccessHintWindow* registerSuccessHintWindow, ResetPasswordWindow* resetPasswordWindow) {
+void Controller::init(LoginWindow* loginWindow, RegisterWindow* registerWindow, RegisterSuccessHintWindow* registerSuccessHintWindow, ResetPasswordWindow* resetPasswordWindow, QQmlApplicationEngine* engine) {
 	this->loginWindow_ = loginWindow;
 	this->registerWindow_ = registerWindow;
 	this->registerSuccessHintWindow_ = registerSuccessHintWindow;
 	this->resetPasswordWindow_ = resetPasswordWindow;
+	this->engine_ = engine;
 	loginWindow_->show();
 	auto self = shared_from_this();
 	///TCP连接成功后槽函数处理
@@ -159,6 +166,8 @@ void Controller::slotUserLogin() {
 }
 void Controller::slotTcpRecvMsg(MSG_IDS reqId, QString data) {
 	qDebug() << "接收到来自TCPMgr提取出来的消息：id =" << (int)reqId << ", data = " << data;
+	loginWindow_->setVisible(false);
+	setChatWindowVisible(true);
 }
 void Controller::slotTcpConnect(bool success) {
 	if (success) {
@@ -186,11 +195,12 @@ void Controller::handleRegisterGetValideCode(nlohmann::json responseJson) {
 	registerWindow_->updateMsgHint(nullptr, hintGetValidateCodeSuccess, true);
 }
 
+
 void Controller::handleResetPasswordGetValideCode(nlohmann::json responseJson) {
 	int errorcode = responseJson["error_code"];
 	if (errorcode != ERRORCODE::SUCCESS) {
 		qDebug() << "重置密码模块：获取验证码失败，错误码为" << errorcode;
-		resetPasswordWindow_->updateMsgHint(nullptr, "验证码获取失败", false);
+		resetPasswordWindow_->updateMsgHint(nullptr, QString::fromStdString(ErrorMap.at(static_cast<ERRORCODE>(errorcode))), false);
 		return;
 	}
 	qDebug() << "重置密码模块：获取验证码成功！";
@@ -214,11 +224,17 @@ void Controller::handleResetPassword(nlohmann::json responseJson) {
 	if (errorcode != ERRORCODE::SUCCESS) {
 		qDebug() << " 用户重置密码失败，错误码为！ " << errorcode;
 		resetPasswordWindow_->updateMsgHint(nullptr, hintResetPasswordFailedReturn, false);
+		resetPasswordWindow_->disableAllBtn(false);
 		return;
 	}else{
 		qDebug() << " 用户重置密码成功！ ";
 		qDebug() << "获取返回结果" << QString::fromStdString(responseJson.dump());
 		resetPasswordWindow_->updateMsgHint(nullptr, hintResetPasswordSuccessReturn, true);
+		///3秒后启用一个定时器
+		QTimer::singleShot(3000, this, [this]() {
+			slotHideAndShow(resetPasswordWindow_, loginWindow_);
+			resetPasswordWindow_->disableAllBtn(false);
+			});
 	}
 }
 
@@ -228,7 +244,7 @@ void Controller::handleUserLogin(nlohmann::json responseJson) {
 	QString data = QString::fromStdString(responseJson.dump());
 	if (errorcode != ERRORCODE::SUCCESS) {
 		qDebug() << "用户登录失败，错误码为！ " << errorcode;
-		loginWindow_->updateMsgHint(nullptr, hintResetPasswordFailedReturn, false);
+		loginWindow_->updateMsgHint(nullptr, QString::fromStdString(ErrorMap.at(static_cast<ERRORCODE>(errorcode))), false);
 		return;
 	}
 	else {
@@ -238,9 +254,20 @@ void Controller::handleUserLogin(nlohmann::json responseJson) {
 		si.Uid = QString::fromStdString(responseJson.at("uid").get<std::string>());
 		si.Token = QString::fromStdString(responseJson.at("token").get<std::string>());
 		///提示用户获取聊天服务器IP及PORT成功
-		loginWindow_->updateMsgHint(nullptr, hintGetChatServerFailed, true);
+		loginWindow_->updateMsgHint(nullptr, hintGetChatServerSuccess, true);
 		connectChatServer = si;
-		TcpMgr::GetInstance()->slot_tcp_connect(connectChatServer);
+		TcpMgr::GetInstance()->connectToServer(connectChatServer);
 	}
 
+}
+
+bool Controller::setChatWindowVisible(bool visible) {
+	QObject* rootWindow = engine_->rootObjects().first();
+	if (rootWindow) {
+		rootWindow->setProperty("visible", visible);
+		return true;
+	}
+	else {
+		return false;
+	}
 }

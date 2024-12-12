@@ -1,4 +1,4 @@
-#ifndef Controller_H
+ï»¿#ifndef Controller_H
 #define Controller_H
 
 
@@ -11,37 +11,41 @@
 #include "RegisterWindow.h"
 #include "RegisterSuccessHintWindow.h"
 #include "ResetPasswordWindow.h"
+#include <QQmlApplicationEngine>
 class Controller: public QObject,public Singleton<Controller>,public enable_shared_from_this<Controller> {
 	Q_OBJECT
 public:
-	void init(LoginWindow* loginWindow, RegisterWindow* registerWindow, RegisterSuccessHintWindow* registerSuccessHintWindow, ResetPasswordWindow* resetPasswordWindow);
+	void init(LoginWindow* loginWindow, RegisterWindow* registerWindow, RegisterSuccessHintWindow* registerSuccessHintWindow, ResetPasswordWindow* resetPasswordWindow, QQmlApplicationEngine* engine);
 	~Controller();
 
 
 public slots:
-	/// Í¨ÓÃ½çÃæÌø×ª²Ûº¯Êı
+	/// é€šç”¨ç•Œé¢è·³è½¬æ§½å‡½æ•°
 	void slotHideAndShow(QWidget* hideWidget, QWidget* showWidget);
-	/// TcpMgrÀàÁ¬½Ó·şÎñÆ÷²Ûº¯Êı
+	/// TcpMgrç±»è¿æ¥æœåŠ¡å™¨æ§½å‡½æ•°
 	void slotTcpConnect(bool success);
 	void slotTcpRecvMsg(MSG_IDS reqId, QString data);
-	/// httpÏìÓ¦²Ûº¯Êı
+	/// httpå“åº”æ§½å‡½æ•°
 	void slotHttpFinished(MODULE module, ID id, ERRORCODE code, QString data);
-	/// ×¢²á»òÖØÖÃÃÜÂë½çÃæ»ñÈ¡ÑéÖ¤Âë²Ûº¯Êı
+	/// æ³¨å†Œæˆ–é‡ç½®å¯†ç ç•Œé¢è·å–éªŒè¯ç æ§½å‡½æ•°
 	void slotGetValidateCode(MODULE module, ID id);
-	/// ÓÃ»§×¢²áÃæ°å²Ûº¯Êı
+	/// ç”¨æˆ·æ³¨å†Œé¢æ¿æ§½å‡½æ•°
     void slotRegistUser();
-	/// ÃÜÂëÖØÖÃÃæ°å²Ûº¯Êı
+	/// å¯†ç é‡ç½®é¢æ¿æ§½å‡½æ•°
 	void slotResetPassword();
-	///µÇÂ¼Ãæ°å²Ûº¯Êı
+	///ç™»å½•é¢æ¿æ§½å‡½æ•°
 	void slotUserLogin();
 	
 
-	///¶ÔÓÚslotHttpFinishedÒÔ¼°TCPMgr»áµ÷ÓÃµÄ»Øµ÷º¯Êı
+	///å¯¹äºslotHttpFinishedä»¥åŠTCPMgrä¼šè°ƒç”¨çš„å›è°ƒå‡½æ•°
 	void handleRegisterGetValideCode(nlohmann::json);
 	void handleResetPasswordGetValideCode(nlohmann::json responseJson);
 	void handleUserRegister(nlohmann::json responseJson);
 	void handleResetPassword(nlohmann::json responseJson);
 	void handleUserLogin(nlohmann::json responseJson);
+
+	///è®¾ç½®èŠå¤©çª—å£æ˜¯å¦å¯è§,è¿”å›å€¼ä¸ºæ˜¯å¦è®¾ç½®æˆåŠŸ
+	bool setChatWindowVisible(bool visible);
 private:
 	friend class Singleton<Controller>;
 	Controller();
@@ -51,5 +55,6 @@ private:
 	RegisterWindow* registerWindow_;
 	RegisterSuccessHintWindow* registerSuccessHintWindow_;
 	ResetPasswordWindow* resetPasswordWindow_;
+	QQmlApplicationEngine* engine_;
 };
 #endif // !Controller_H
