@@ -14,10 +14,6 @@
 #include <QHttpMultiPart>
 #include <QPainter>
 #include <QPen>
-#include <QChart>
-#include <QLineSeries>
-#include <QChartView>
-#include <QValueAxis>
 #include <QScrollArea>
 #include <algorithm>
 #include <QTimer>
@@ -45,6 +41,7 @@ public:
     ///用于判断用户所填入的信息是否有误
     bool judgeInfo();
     bool judgeRegistInfoComplete();
+
     ~RegisterWindow();
 
 

@@ -55,7 +55,7 @@ TcpMgr::TcpMgr() :
     });
 
 
-    QObject::connect(&_socket, static_cast<void (QTcpSocket::*)(QTcpSocket::SocketError)>(&QTcpSocket::error),
+    QObject::connect(&_socket, &QTcpSocket::errorOccurred,
         [&](QTcpSocket::SocketError socketError) {
             qDebug() << "Error:" << _socket.errorString();
             switch (socketError) {
@@ -89,7 +89,7 @@ TcpMgr::TcpMgr() :
     QObject::connect(this, &TcpMgr::sig_send_data, this, &TcpMgr::slot_send_data);
 }
 
-void TcpMgr::slot_tcp_connect(ServerInfo si)
+void TcpMgr::connectToServer(ServerInfo si)
 {
     qDebug() << "receive tcp connect signal";
     // 尝试连接到服务器
@@ -114,7 +114,7 @@ void TcpMgr::slot_send_data(MSG_IDS reqId, QString data)
     // 写入ID和长度
     out << id << len;
     // 添加字符串数据
-    block.append(data);
+    block.append(data.toStdString().c_str());
     // 发送数据
     _socket.write(block);
 }

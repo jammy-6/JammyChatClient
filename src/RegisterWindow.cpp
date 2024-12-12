@@ -26,11 +26,13 @@ void RegisterWindow::initConnect() {
         QRegularExpressionMatch match = regex.match(text);
         if (match.hasMatch()) {
             updateMsgHint(registerEmail->lineEdit, "", true);
-            getValidateCodeBtn->setEnabled(true);
+            if(false == getValidateCodeBtn->getCountingStatus())
+                getValidateCodeBtn->setEnabled(true);
         }
         else {
             updateMsgHint(registerEmail->lineEdit, errorMailFormat, false);
-            getValidateCodeBtn->setEnabled(false);
+            if (false == getValidateCodeBtn->getCountingStatus())
+                getValidateCodeBtn->setEnabled(false);
         }
      });
 }
@@ -235,7 +237,7 @@ void RegisterWindow::initUI() {
 }
 void RegisterWindow::paintEvent(QPaintEvent* event){
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 }
@@ -244,6 +246,7 @@ void RegisterWindow::contextMenuEvent(QContextMenuEvent* event)
     // 在鼠标右键点击的位置显示菜单
     contextMenu.exec(event->globalPos());
 }
+#include <QFile>
 void RegisterWindow::reloadQss()
 {
     // 重新加载QSS

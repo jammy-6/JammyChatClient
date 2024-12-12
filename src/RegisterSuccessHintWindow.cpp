@@ -1,5 +1,4 @@
-
-#pragma execution_character_set("utf-8")
+ï»¿#pragma execution_character_set("utf-8")
 #include "RegisterSuccessHintWindow.h"
 #include <Config.h>
 #include <QSpacerItem>
@@ -24,7 +23,7 @@ void RegisterSuccessHintWindow::initConnect() {
 void RegisterSuccessHintWindow::initUI() {
     this->setObjectName("registerSuccessHintWindow");
     this->setAttribute(Qt::WA_TranslucentBackground, true);
-    //ÉèÖÃÎÞ±ß¿ò
+    //è®¾ç½®æ— è¾¹æ¡†
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
 
@@ -33,10 +32,10 @@ void RegisterSuccessHintWindow::initUI() {
     this->setFixedWidth(300);
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
     mainLayout->setContentsMargins(8, 16, 8, 16);
-    ///±êÌâ
+    ///æ ‡é¢˜
     titleLabel = new QLabel;
     titleLabel->setObjectName("titleLabel");
-    titleLabel->setText(QString("JammyÍ¨ÐÅ¿Í»§¶Ë"));
+    titleLabel->setText(QString("Jammyé€šä¿¡å®¢æˆ·ç«¯"));
     mainLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
     QSpacerItem* titleSpacer = new QSpacerItem(284, 30, QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
     mainLayout->addItem(titleSpacer);
@@ -49,10 +48,10 @@ void RegisterSuccessHintWindow::initUI() {
     QSpacerItem* hintSpacer = new QSpacerItem(284, 10, QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
     mainLayout->addItem(hintSpacer);
 
-    ///·µ»ØµÇÂ¼
+    ///è¿”å›žç™»å½•
     returnBtn = new QPushButton;
     returnBtn->setObjectName(QString("returnBtn"));
-    returnBtn->setText(QString("·µ»ØµÇÂ¼"));
+    returnBtn->setText(QString("è¿”å›žç™»å½•"));
     returnBtn->setFixedSize(returnBtn->sizeHint().width(), 30);
     mainLayout->addWidget(returnBtn, 0, Qt::AlignHCenter);
     connect(returnBtn, &QPushButton::clicked, [this]() {
@@ -64,7 +63,8 @@ void RegisterSuccessHintWindow::initUI() {
 }
 void RegisterSuccessHintWindow::paintEvent(QPaintEvent* event) {
     QStyleOption opt;
-    opt.init(this);
+   
+    opt.initFrom(this);
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 }

@@ -9,12 +9,13 @@ class CustomTimerBtn : public QPushButton {
 public:
 	CustomTimerBtn(QWidget* parent = nullptr);
 	~CustomTimerBtn();
-
+	bool getCountingStatus() { return this->countingStatus_; }
 	void mouseReleaseEvent(QMouseEvent* e) override;
 private slots:
 	void slotTimeout();
 private:
 	QTimer* timer_;
+	bool countingStatus_ = false; /// true代表正处于倒计时
 	int countdown_ = 10;
 };
 

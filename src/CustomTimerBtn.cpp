@@ -13,6 +13,7 @@ void CustomTimerBtn::slotTimeout() {
 		countdown_ = 10;
 		this->setEnabled(true);
 		this->setText(QString("获取"));
+		countingStatus_ = false;
 		timer_->stop();
 		return;
 	}
@@ -26,6 +27,7 @@ void CustomTimerBtn::mouseReleaseEvent(QMouseEvent* e) {
 	if (e->button() == Qt::LeftButton) {
 		this->setText(QString::number(countdown_));
 		timer_->start(1000);
+		countingStatus_ = true;
 		this->setEnabled(false);
 		emit clicked();
 	}

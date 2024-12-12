@@ -14,10 +14,6 @@
 #include <QHttpMultiPart>
 #include <QPainter>
 #include <QPen>
-#include <QChart>
-#include <QLineSeries>
-#include <QChartView>
-#include <QValueAxis>
 #include <QScrollArea>
 #include <algorithm>
 #include <QTimer>

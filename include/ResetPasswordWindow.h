@@ -14,10 +14,7 @@
 #include <QHttpMultiPart>
 #include <QPainter>
 #include <QPen>
-#include <QChart>
-#include <QLineSeries>
-#include <QChartView>
-#include <QValueAxis>
+
 #include <QScrollArea>
 #include <algorithm>
 #include <QTimer>
@@ -47,6 +44,8 @@ public:
     bool judgeResetInfoComplete();
     ///判断当前所填入信息是否可以发送验证码
     bool judgeResetInfoCanSendCode();
+    ///禁用当前控件下所有按钮
+    void disableAllBtn(bool status);
     ~ResetPasswordWindow();
 
 

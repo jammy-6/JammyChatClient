@@ -126,7 +126,7 @@ void LoginWindow::updateMsgHint(QWidget* widget, QString hint, bool status) {
 }
 void LoginWindow::paintEvent(QPaintEvent* event){
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 }
@@ -135,6 +135,7 @@ void LoginWindow::contextMenuEvent(QContextMenuEvent* event)
     // 在鼠标右键点击的位置显示菜单
     contextMenu.exec(event->globalPos());
 }
+#include <QFile>
 void LoginWindow::reloadQss()
 {
     // 重新加载QSS

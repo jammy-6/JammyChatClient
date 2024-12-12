@@ -7,7 +7,7 @@
 #include <QStyleOption>
 #include <QLineEdit>
 #include <QGraphicsDropShadowEffect>
-
+#include <QFile>
 ResetPasswordWindow::ResetPasswordWindow(QWidget *parent) :
     MoveableWidget(parent)
 {
@@ -44,7 +44,13 @@ bool ResetPasswordWindow::judgeInfo() {
     }
     return false;
 }
+///禁用当前控件下所有按钮
+void ResetPasswordWindow::disableAllBtn(bool status) {
+    confirmBtn->setDisabled(status);
+	returnBtn->setDisabled(status);
+	getValidateCodeBtn->setDisabled(status);
 
+}
 bool ResetPasswordWindow::judgeResetInfoComplete() {
     if (resetUser->lineEdit->text().isEmpty()) {
         updateMsgHint(nullptr, errorUserNameEmpty, false);
@@ -63,8 +69,7 @@ bool ResetPasswordWindow::judgeResetInfoComplete() {
         return false;
     }
 
-
-    return judgeInfo();
+    return true;
 
 }
 bool ResetPasswordWindow::judgeResetInfoCanSendCode() {
@@ -76,7 +81,7 @@ bool ResetPasswordWindow::judgeResetInfoCanSendCode() {
         updateMsgHint(nullptr, errorUserEmailEmpty, false);
         return false;
     }
-    return judgeInfo();
+    return true;
 }
 
 void ResetPasswordWindow::initUI() {
@@ -204,7 +209,7 @@ void ResetPasswordWindow::initUI() {
 }
 void ResetPasswordWindow::paintEvent(QPaintEvent* event){
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 }
