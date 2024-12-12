@@ -1,10 +1,9 @@
-﻿
-#ifndef GLOBAL_H
+﻿#ifndef GLOBAL_H
 #define GLOBAL_H
 #include <QString>
 #include <iostream>
 #include "Config.h"
-
+#include <unordered_map>
 enum MODULE {
 	MODULE_REGISTER = 0,
 	MODULE_RESET_PASSWORD = 1,
@@ -38,10 +37,23 @@ enum ERRORCODE {
 	Error_User_Not_Exist = 1007,//用户不存在
 	Error_Update_Password = 1008,///更新数据库失败
 	ERROR_PASSWORD_NOT_CORRECT = 1009,///密码不正确
-	ERROR_NETWORK=1010,///网络错误
-	ERROR_JSON_PARSE_FAILED=1011,///JSON解析失败
+	ERROR_USER_EMAIL_NOT_MATCH = 1010,//用户名与邮箱不匹配
+	ERROR_NETWORK=1030,///网络错误
 };
 
+const std::unordered_map<ERRORCODE, std::string> ErrorMap = {
+	{ERRORCODE::Error_Json, "服务端JSON解析错误"},
+	{ERRORCODE::RPCFailed,"服务端RPC请求错误"},
+	{ERRORCODE::Password_Not_Equal, "两次密码不一致"},
+	{ERRORCODE::Varify_Code_Expired,"验证码失效"},
+	{ERRORCODE::Varify_Code_Not_Equal, "验证码不一致"},
+	{ERRORCODE::Error_User_Exist,"用户名或邮箱已存在"},
+	{ERRORCODE::Error_User_Not_Exist, "用户名或邮箱不存在"},
+	{ERRORCODE::Error_Update_Password,"更新数据库失败"},
+	{ERRORCODE::ERROR_PASSWORD_NOT_CORRECT, "密码不正确"},
+	{ERRORCODE::ERROR_NETWORK,"网络错误！"},
+	{ERRORCODE::ERROR_USER_EMAIL_NOT_MATCH,"用户名与邮箱不匹配！"},
+};
 
 typedef struct ServerInfo {
 	QString Host;
@@ -72,4 +84,4 @@ const QString hintGetChatServerFailed = "获取聊天服务器IP及PORT失败";
 const QString hintGetChatServerSuccess = "获取聊天服务器IP及PORT成功，正在连接服务器...";
 const QString hintConnectChatServerSuccess = "聊天服务连接成功，正在登录...";
 const QString hintConnectChatServerFailed = "聊天服务连接失败";
-#endif // ! 
+#endif // !
