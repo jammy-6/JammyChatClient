@@ -20,8 +20,9 @@ private:
     bool _b_recv_pending;
     quint16 _message_id;
     quint16 _message_len;
+public:
+    void connectToServer(ServerInfo);
 public slots:
-    void slot_tcp_connect(ServerInfo);
     void slot_send_data(MSG_IDS reqId, QString data);
 signals:
     void sig_con_success(bool bsuccess);
