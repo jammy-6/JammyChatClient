@@ -1,11 +1,14 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
+﻿CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
 PROJECT(JammyChatClient VERSION 1.0 LANGUAGES CXX)
 
 
 # 设置 C++ 标准
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 # 设置项目资源文件路径
@@ -15,6 +18,7 @@ message(STATUS "RESOURCE_DIR  = ${RESOURCE_DIR}")
 configure_file(Config.h.in Config.h)
 include_directories(${CMAKE_BINARY_DIR})
 
+
 # vs中sln文件分类
 if(WIN32)
 	source_group("CMake Rules"  REGULAR_EXPRESSION "^$")
@@ -22,6 +26,7 @@ if(WIN32)
 	source_group("Header Files" REGULAR_EXPRESSION ".h$")
 	source_group("Source Files" REGULAR_EXPRESSION ".cpp$")
     source_group("Qrc Files"    REGULAR_EXPRESSION ".qrc$")
+	source_group("QML Files" 	REGULAR_EXPRESSION ".qml$")
     source_group("Ui Files"    REGULAR_EXPRESSION ".ui$")
 	source_group("zero"			REGULAR_EXPRESSION ".stamp$|.rule$")
 endif()
@@ -38,34 +43,32 @@ endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # 没有添加环境变量时需要加入下面这句
-set(Qt5_ROOT "D:/Program Files/Qt5.12.12/5.12.12/msvc2017_64")
-find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui Network Charts )
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS  Widgets Core Gui Network Quick)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Core Gui Network Quick)
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+
 
 MESSAGE(STATUS "=================================================================")
-if(DEFINED Qt5_FOUND)
-    MESSAGE(STATUS "find Qt5_FOUND: ${Qt5_DIR}")
-    MESSAGE(STATUS "find Qt5_FOUND: ${Qt5_FOUND}")
-    MESSAGE(STATUS "Qt5Widgets_INCLUDE_DIRS: ${Qt5Widgets_INCLUDE_DIRS}")
-    MESSAGE(STATUS "Qt5Gui_INCLUDE_DIRS: ${Qt5Gui_INCLUDE_DIRS}")
-    MESSAGE(STATUS "Qt5Core_INCLUDE_DIRS: ${Qt5Core_INCLUDE_DIRS}")
-    MESSAGE(STATUS "Qt5Network_INCLUDE_DIRS: ${Qt5Network_INCLUDE_DIRS}")
-    MESSAGE(STATUS "Qt5Charts_INCLUDE_DIRS: ${Qt5Charts_INCLUDE_DIRS}")
+if(DEFINED Qt6_FOUND)
+    MESSAGE(STATUS "find Qt6_FOUND: ${Qt6_DIR}")
+    MESSAGE(STATUS "find Qt6_FOUND: ${Qt6_FOUND}")
+    MESSAGE(STATUS "Qt6Widgets_INCLUDE_DIRS: ${Qt6Widgets_INCLUDE_DIRS}")
+    MESSAGE(STATUS "Qt6Gui_INCLUDE_DIRS: ${Qt6Gui_INCLUDE_DIRS}")
+    MESSAGE(STATUS "Qt6Core_INCLUDE_DIRS: ${Qt6Core_INCLUDE_DIRS}")
+    MESSAGE(STATUS "Qt6Network_INCLUDE_DIRS: ${Qt6Network_INCLUDE_DIRS}")
+    MESSAGE(STATUS "Qt6Charts_INCLUDE_DIRS: ${Qt6Charts_INCLUDE_DIRS}")
 else()
-    MESSAGE(STATUS "not find Qt5_FOUND: ${Qt5_FOUND}")
+    MESSAGE(STATUS "not find Qt6_FOUND: ${Qt6_FOUND}")
 endif()
 MESSAGE(STATUS "=================================================================")
 
 
 #添加qt包include头文件
-include_directories(${Qt5Widgets_INCLUDE_DIRS})
-include_directories(${Qt5Gui_INCLUDE_DIRS})
-include_directories(${Qt5Core_INCLUDE_DIRS})
-include_directories(${Qt5Network_INCLUDE_DIRS})
-include_directories(${Qt5Charts_INCLUDE_DIRS})
+include_directories(${Qt6Widgets_INCLUDE_DIRS})
+include_directories(${Qt6Gui_INCLUDE_DIRS})
+include_directories(${Qt6Core_INCLUDE_DIRS})
+include_directories(${Qt6Network_INCLUDE_DIRS})
+include_directories(${Qt6Charts_INCLUDE_DIRS})
 
 # 设置qrc文件路径
 set("${PROJECT_NAME}_resource_dir" "${CMAKE_CURRENT_SOURCE_DIR}/resource")
@@ -113,6 +116,10 @@ file(GLOB_RECURSE "${PROJECT_NAME}_include" "${${PROJECT_NAME}_include_dir}/*.h"
 set("${PROJECT_NAME}_src_dir" "${CMAKE_CURRENT_SOURCE_DIR}/src") 
 file(GLOB_RECURSE "${PROJECT_NAME}_src" "${${PROJECT_NAME}_src_dir}/*.cpp")
 
+# 添加项目源文件路径
+set("${PROJECT_NAME}_qml_dir" "${CMAKE_CURRENT_SOURCE_DIR}/resource") 
+file(GLOB_RECURSE "${PROJECT_NAME}_qml" "${${PROJECT_NAME}_qml_dir}/*.qml")
+message(STATUS "QML资源文件： ${${PROJECT_NAME}_qml}")
 # 生成可执行文件
 add_executable(     
     ${PROJECT_NAME}
@@ -120,17 +127,26 @@ add_executable(
     ${${PROJECT_NAME}_include}
     ${${PROJECT_NAME}_ui}
     ${${PROJECT_NAME}_qrc}
+	${${PROJECT_NAME}_qml}
 )
 
 # 配置链接库
 target_link_libraries(
     ${PROJECT_NAME}
         PUBLIC
-        Qt5::Widgets
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Network
+		
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Network
+		Qt${QT_VERSION_MAJOR}::Quick
         ${Boost_LIBRARIES}
         Boost::filesystem
 
 )
+
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_import_qml_plugins(${PROJECT_NAME})
+    qt_finalize_executable(${PROJECT_NAME})
+endif()
