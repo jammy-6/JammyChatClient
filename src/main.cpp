@@ -13,7 +13,8 @@
 #include "Controller.h"
 #include "ConfigMgr.h"
 #include "ResetPasswordWindow.h"
-//#include "ChatWindow.h"
+#include <stdlib.h>
+#include <thread>
 ConfigMgr gConfigMgr;
 
 int main(int argc, char *argv[])
@@ -22,15 +23,20 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     FriendListModel friendListModel;
-    for (int i = 1; i <= 10000; ++i) {
-        Friend friendData;
-        friendData.name = QString("Friend %1").arg(i);
-        friendData.status = (i % 2 == 0) ? "在线" : "离线";
-        friendData.lastMessage = "随机消息";
-        friendData.time = QString("时间 %1").arg(i);
-        friendData.avatar = QString("qrc:/UserHeadIcon/head_%1.jpg").arg(i % 5 + 1); // 设置头像路径，假设有5个头像图片
-        friendListModel.addFriend(friendData);
-    }
+
+    std::thread th([&friendListModel]() {
+        for (int i = 1; i <= 1000; ++i) {
+            // _sleep(1000);
+            Friend friendData;
+            friendData.name = QString("Friend %1").arg(rand() % 1000);
+            friendData.status = (i % 2 == 0) ? "在线" : "离线";
+            friendData.lastMessage = "随机消息";
+            friendData.time = QString("时间 %1").arg(i);
+            friendData.avatar = QString("qrc:/UserHeadIcon/head_%1.jpg").arg(i % 5 + 1); // 设置头像路径，假设有5个头像图片
+            friendListModel.addFriend(friendData);
+        }
+    });
+
 
     engine.rootContext()->setContextProperty("friendListModel", &friendListModel);
 

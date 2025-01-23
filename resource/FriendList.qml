@@ -4,23 +4,21 @@ import QtQuick.Controls.Material 2.15
 ScrollView {
 
 
-
     ListView {
-        id: listView
-        anchors.fill: parent
+        id: friendListView
+        
         model: friendListModel
 
         delegate: Item {
-            width: listView.width
+            width: friendListView.width
             height: 80
 
             Rectangle {
                 width: parent.width
                 height: parent.height
-                color: listView.currentIndex === index ? "lightblue" : "transparent"
+                color: friendListView.currentIndex === index ? "#c8c6c5" : "transparent"
                 //color: index % 2 == 0 ? "#f0f0f0" : "#ffffff"
                 clip: true
-
                 Row {
 
                     anchors.verticalCenter: parent.verticalCenter
@@ -40,7 +38,7 @@ ScrollView {
                     }
 
                     Column {
-                        width: listView.width - 70
+                        width: friendListView.width - 70
                         spacing: 5
 
                         Row {
@@ -72,7 +70,7 @@ ScrollView {
                             }
 
                             Item {
-                                width: listView.width - 200
+                                width: friendListView.width - 200
                             }
 
                             Text {
@@ -90,30 +88,16 @@ ScrollView {
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
-                    onClicked: { listView.currentIndex = index }
+                    onClicked: { friendListView.currentIndex = index }
                 }
             }
         }
 
-        ScrollBar.vertical: ScrollBar {
-            id: scrollBar
-            policy: ScrollBar.AlwaysOn
-            width: 12
-            contentItem: Rectangle {
-                width: 12
-                height: scrollBar.contentItem.height
-                radius: 6
-                color: "#ff4081"
-            }
-            background: Rectangle {
-                color: "#e0e0e0"
-                radius: 6
-            }
-        }
-
         Keys.onSpacePressed: {
-            listView.positionViewAtEnd();
+            friendListView.positionViewAtEnd();
         }
 
     }
+    ScrollBar.horizontal.interactive: false
+    ScrollBar.vertical.interactive: true
 }

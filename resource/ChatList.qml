@@ -2,10 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.15
 Column{
-
     ///聊天列表
     Rectangle{
-
         id:msgRect
         width: parent.width
         height:parent.height-inputRow.height
@@ -13,10 +11,8 @@ Column{
         ListModel {
             id: chatModel
         }
-
         Column {
             anchors.fill: parent
-
             spacing: 10
             padding: 10
 

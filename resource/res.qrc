@@ -15,6 +15,9 @@
 		<file>ChatWindow/contactListBtn_checked_hover.png</file>
 		<file>ChatWindow/addFriendBtn.png</file>
 		<file>ChatWindow/addFriendBtn_hover.png</file>
+		<file>ChatWindow/friend.png</file>
+		<file>ChatWindow/message.png</file>
+		<file>ChatWindow/newFriend.png</file>
 		<file>UserHeadIcon/head_1.jpg</file>
 		<file>UserHeadIcon/head_2.jpg</file>
 		<file>UserHeadIcon/head_3.jpg</file>
@@ -22,6 +25,7 @@
 		<file>UserHeadIcon/head_5.jpg</file>
 		<file>main.qml</file>
 		<file>FriendList.qml</file>
+		<file>FriendOrderList.qml</file>
 		<file>ChatList.qml</file>
     </qresource>
 </RCC>

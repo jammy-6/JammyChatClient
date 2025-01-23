@@ -27,9 +27,11 @@ if(WIN32)
 	source_group("Source Files" REGULAR_EXPRESSION ".cpp$")
     source_group("Qrc Files"    REGULAR_EXPRESSION ".qrc$")
 	source_group("QML Files" 	REGULAR_EXPRESSION ".qml$")
+	source_group("QSS Files" 	REGULAR_EXPRESSION ".qss$")
     source_group("Ui Files"    REGULAR_EXPRESSION ".ui$")
 	source_group("zero"			REGULAR_EXPRESSION ".stamp$|.rule$")
 endif()
+
 
 # 设置构建类型
 if(NOT CMAKE_BUILD_TYPE)
@@ -108,26 +110,33 @@ message(STATUS "Boost_INCLUDE_DIRS = ${Boost_INCLUDE_DIRS}")
 
 
 # 添加项目头文件路径
-set("${PROJECT_NAME}_include_dir" "${CMAKE_CURRENT_SOURCE_DIR}/include") 
-include_directories(${${PROJECT_NAME}_include_dir})
-file(GLOB_RECURSE "${PROJECT_NAME}_include" "${${PROJECT_NAME}_include_dir}/*.h")
+set("${PROJECT_NAME}_header_dir" "${CMAKE_CURRENT_SOURCE_DIR}/include") 
+include_directories(${${PROJECT_NAME}_header_dir})
+file(GLOB_RECURSE "${PROJECT_NAME}_header" "${${PROJECT_NAME}_header_dir}/*.h")
 
 # 添加项目源文件路径
 set("${PROJECT_NAME}_src_dir" "${CMAKE_CURRENT_SOURCE_DIR}/src") 
 file(GLOB_RECURSE "${PROJECT_NAME}_src" "${${PROJECT_NAME}_src_dir}/*.cpp")
 
-# 添加项目源文件路径
+# 添加qml资源文件路径
 set("${PROJECT_NAME}_qml_dir" "${CMAKE_CURRENT_SOURCE_DIR}/resource") 
 file(GLOB_RECURSE "${PROJECT_NAME}_qml" "${${PROJECT_NAME}_qml_dir}/*.qml")
 message(STATUS "QML资源文件： ${${PROJECT_NAME}_qml}")
+
+# 添加qss资源文件路径
+set("${PROJECT_NAME}_qss_dir" "${CMAKE_CURRENT_SOURCE_DIR}/resource") 
+file(GLOB_RECURSE "${PROJECT_NAME}_qss" "${${PROJECT_NAME}_qss_dir}/*.qss")
+message(STATUS "QSS资源文件： ${${PROJECT_NAME}_qss}")
+
 # 生成可执行文件
 add_executable(     
     ${PROJECT_NAME}
     ${${PROJECT_NAME}_src}
-    ${${PROJECT_NAME}_include}
+    ${${PROJECT_NAME}_header}
     ${${PROJECT_NAME}_ui}
     ${${PROJECT_NAME}_qrc}
 	${${PROJECT_NAME}_qml}
+	${${PROJECT_NAME}_qss}
 )
 
 # 配置链接库

@@ -9,6 +9,14 @@ void FriendListModel::addFriend(const Friend &friendData) {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_friends << friendData;
     endInsertRows();
+    emit modelChanged();
+}
+
+void FriendListModel::insertFriend(const Friend& friendData,int index) {
+    beginInsertRows(QModelIndex(), index, index);
+    m_friends.insert(index,friendData);
+    endInsertRows();
+
 }
 
 int FriendListModel::rowCount(const QModelIndex &parent) const {
@@ -36,6 +44,7 @@ QVariant FriendListModel::data(const QModelIndex &index, int role) const {
 
 QHash<int, QByteArray> FriendListModel::roleNames() const {
     QHash<int, QByteArray> roles;
+	//roles[TypeRole] = "type"; 
     roles[NameRole] = "name";
     roles[StatusRole] = "status";
     roles[LastMessageRole] = "lastMessage";

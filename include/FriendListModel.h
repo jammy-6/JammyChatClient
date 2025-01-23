@@ -19,6 +19,7 @@ class FriendListModel : public QAbstractListModel {
 
 public:
     enum FriendRoles {
+/*        TypeRole*/ 
         NameRole = Qt::UserRole + 1,
         StatusRole,
         LastMessageRole,
@@ -27,7 +28,7 @@ public:
     };
 
     FriendListModel(QObject *parent = nullptr);
-
+    void insertFriend(const Friend& friendData, int index);
     void addFriend(const Friend &friendData);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -36,6 +37,8 @@ public:
 
 private:
     QVector<Friend> m_friends;
+signals:
+    void modelChanged();
 };
 
 #endif // FRIENDLISTMODEL_H

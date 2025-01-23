@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <mutex>
+#include <QDebug>
 #include <iostream>
 using namespace std;
 template <typename T>
@@ -27,7 +28,7 @@ public:
         qDebug() << _instance.get() << endl;
     }
     ~Singleton() {
-        qDebug() << "this is singleton destruct" ;
+        // qDebug() << "this is singleton destruct" ;
     }
 };
 
