@@ -2,13 +2,13 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.15
 ScrollView {
-
+    property int currentIndex:friendListView.currentIndex
 
     ListView {
         id: friendListView
         
-        model: friendListModel
-
+        //model: friendListModel
+        model: userManagement.friends
         delegate: Item {
             width: friendListView.width
             height: 80
@@ -50,10 +50,11 @@ ScrollView {
                             }
 
                             Text {
-                                text: model.time
+                                text: model.chatMsgs.getLastMsgTime()
                                 font.pixelSize: 14
                                 color: "#999999"
                                 width: parent.parent.width - (parent.children[0].implicitWidth + parent.spacing)
+
                                 horizontalAlignment: Text.AlignRight
                                 anchors.verticalCenter: parent.verticalCenter
                                 rightPadding: 20
@@ -64,9 +65,9 @@ ScrollView {
                         Row {
                             spacing: 10
                             Text {
-                                text: model.status
+                                text: model.status===0?"离线":"在线"
                                 font.pixelSize: 14
-                                color: model.status === "在线" ? "#00aa00" : "#aa0000"
+                                color: model.status === 1 ? "#00aa00" : "#aa0000"
                             }
 
                             Item {
@@ -74,8 +75,10 @@ ScrollView {
                             }
 
                             Text {
-                                text: model.lastMessage
+                                text: model.chatMsgs.getLastMsg()
                                 width: parent.parent.width - (parent.children[0].implicitWidth + parent.spacing)
+
+                                elide: Text.ElideRight
                                 horizontalAlignment: Text.AlignRight
                                 font.pixelSize: 14
                                 color: "#666666"

@@ -1,23 +1,29 @@
-﻿CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
+﻿CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 PROJECT(JammyChatClient VERSION 1.0 LANGUAGES CXX)
 
-
-# 设置 C++ 标准
+# qt相关配置
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-
+# 设置c++17标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#windows系统动态库生成lib文件命令
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+# 配置find_package的相关路径
+list(APPEND  
+    CMAKE_PREFIX_PATH 
+    "D:/Qt/6.5.3/msvc2019_64/lib/cmake"
+    "D:/Program Files/boost_1_86_0/stage/lib/cmake/Boost-1.86.0"
+    "D:/repos/spdlog/build/install"
+)
 
 # 设置项目资源文件路径
-set(RESOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/resource)
-message(STATUS "RESOURCE_DIR  = ${RESOURCE_DIR}")
-# 项目宏相关
-configure_file(Config.h.in Config.h)
-include_directories(${CMAKE_BINARY_DIR})
+set(RESOURCE_DIR ${CMAKE_SOURCE_DIR}/resource)
 
+# 项目宏相关
+configure_file(Config.h.in "${CMAKE_SOURCE_DIR}/include/Config.h")
 
 # vs中sln文件分类
 if(WIN32)
@@ -39,79 +45,18 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 
-
-# 由于生成的C++文件都是放在编译目录里的（在Shadow Building中有别于源码目录），
-# 所以还需要将编译目录包含到Include目录，否则编译器会找不到这些头文件：
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-# 没有添加环境变量时需要加入下面这句
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS  Widgets Core Gui Network Quick)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Core Gui Network Quick)
-
-
-
-MESSAGE(STATUS "=================================================================")
-if(DEFINED Qt6_FOUND)
-    MESSAGE(STATUS "find Qt6_FOUND: ${Qt6_DIR}")
-    MESSAGE(STATUS "find Qt6_FOUND: ${Qt6_FOUND}")
-    MESSAGE(STATUS "Qt6Widgets_INCLUDE_DIRS: ${Qt6Widgets_INCLUDE_DIRS}")
-    MESSAGE(STATUS "Qt6Gui_INCLUDE_DIRS: ${Qt6Gui_INCLUDE_DIRS}")
-    MESSAGE(STATUS "Qt6Core_INCLUDE_DIRS: ${Qt6Core_INCLUDE_DIRS}")
-    MESSAGE(STATUS "Qt6Network_INCLUDE_DIRS: ${Qt6Network_INCLUDE_DIRS}")
-    MESSAGE(STATUS "Qt6Charts_INCLUDE_DIRS: ${Qt6Charts_INCLUDE_DIRS}")
-else()
-    MESSAGE(STATUS "not find Qt6_FOUND: ${Qt6_FOUND}")
-endif()
-MESSAGE(STATUS "=================================================================")
-
-
-#添加qt包include头文件
-include_directories(${Qt6Widgets_INCLUDE_DIRS})
-include_directories(${Qt6Gui_INCLUDE_DIRS})
-include_directories(${Qt6Core_INCLUDE_DIRS})
-include_directories(${Qt6Network_INCLUDE_DIRS})
-include_directories(${Qt6Charts_INCLUDE_DIRS})
+find_package(Qt6 CONFIG REQUIRED COMPONENTS Widgets Core Gui Network Quick)
+find_package(Boost CONFIG REQUIRED COMPONENTS  system filesystem)
+find_package(spdlog CONFIG REQUIRED)
 
 # 设置qrc文件路径
 set("${PROJECT_NAME}_resource_dir" "${CMAKE_CURRENT_SOURCE_DIR}/resource")
-file(GLOB_RECURSE "${PROJECT_NAME}_qrc" "${${PROJECT_NAME}_resource_dir}/*.qrc")
-set(Qrc_Files
-        ${${PROJECT_NAME}_qrc}
-)
-MESSAGE(STATUS "Qrc_Files = ${Qrc_Files}")
-
-# 设置ui文件路径
-set("${PROJECT_NAME}_ui_dir" "${CMAKE_CURRENT_SOURCE_DIR}/ui")
-file(GLOB_RECURSE "${PROJECT_NAME}_ui" "${${PROJECT_NAME}_ui_dir}/*.ui")
-set(Ui_Files
-        ${${PROJECT_NAME}_ui}
-)
-MESSAGE(STATUS "Ui_Files: ${Ui_Files}")
-
-
-set(Boost_NO_SYSTEM_PATHS ON)
-# 查找 Boost 库
-set(BOOST_ROOT "D:/Program Files/boost_1_80_0/stage/lib/cmake")
-find_package(Boost REQUIRED COMPONENTS  system filesystem)
-MESSAGE(STATUS "=================================================================")
-if(DEFINED Boost_FOUND)
-    message(STATUS "Boost version: ${Boost_VERSION}")
-    message(STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
-    message(STATUS "Boost library dirs: ${Boost_LIBRARY_DIRS}")
-    message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
-else ()
-    message(STATUS "Boost Not Found!!!")
-endif ()
-MESSAGE(STATUS "=================================================================")
- # 包含 Boost 头文件
-include_directories(${Boost_INCLUDE_DIRS})
-message(STATUS "Boost_INCLUDE_DIRS = ${Boost_INCLUDE_DIRS}")
-
-
+file(GLOB_RECURSE "${PROJECT_NAME}_qrc" "${CMAKE_SOURCE_DIR}/resource/*.qrc")
 
 # 添加项目头文件路径
 set("${PROJECT_NAME}_header_dir" "${CMAKE_CURRENT_SOURCE_DIR}/include") 
 include_directories(${${PROJECT_NAME}_header_dir})
+
 file(GLOB_RECURSE "${PROJECT_NAME}_header" "${${PROJECT_NAME}_header_dir}/*.h")
 
 # 添加项目源文件路径
@@ -119,40 +64,103 @@ set("${PROJECT_NAME}_src_dir" "${CMAKE_CURRENT_SOURCE_DIR}/src")
 file(GLOB_RECURSE "${PROJECT_NAME}_src" "${${PROJECT_NAME}_src_dir}/*.cpp")
 
 # 添加qml资源文件路径
-set("${PROJECT_NAME}_qml_dir" "${CMAKE_CURRENT_SOURCE_DIR}/resource") 
-file(GLOB_RECURSE "${PROJECT_NAME}_qml" "${${PROJECT_NAME}_qml_dir}/*.qml")
+file(GLOB_RECURSE "${PROJECT_NAME}_qml" "${CMAKE_SOURCE_DIR}/resource/*.qml")
 message(STATUS "QML资源文件： ${${PROJECT_NAME}_qml}")
 
 # 添加qss资源文件路径
-set("${PROJECT_NAME}_qss_dir" "${CMAKE_CURRENT_SOURCE_DIR}/resource") 
-file(GLOB_RECURSE "${PROJECT_NAME}_qss" "${${PROJECT_NAME}_qss_dir}/*.qss")
+file(GLOB_RECURSE "${PROJECT_NAME}_qss" "${CMAKE_SOURCE_DIR}/resource/*.qss")
 message(STATUS "QSS资源文件： ${${PROJECT_NAME}_qss}")
 
-# 生成可执行文件
-add_executable(     
-    ${PROJECT_NAME}
-    ${${PROJECT_NAME}_src}
-    ${${PROJECT_NAME}_header}
-    ${${PROJECT_NAME}_ui}
+# 配置各登录、注册相关窗口
+add_library(
+    chat_window
+    SHARED
     ${${PROJECT_NAME}_qrc}
 	${${PROJECT_NAME}_qml}
 	${${PROJECT_NAME}_qss}
+    ${CMAKE_SOURCE_DIR}/include/MoveableWidget.h
+    ${CMAKE_SOURCE_DIR}/include/CustomerWidget.h
+    ${CMAKE_SOURCE_DIR}/include/CustomTimerBtn.h
+    ${CMAKE_SOURCE_DIR}/include/LoginWindow.h
+    ${CMAKE_SOURCE_DIR}/include/RegisterSuccessHintWindow.h
+    ${CMAKE_SOURCE_DIR}/include/RegisterWindow.h
+    ${CMAKE_SOURCE_DIR}/include/ResetPasswordWindow.h
+
+    ${CMAKE_SOURCE_DIR}/src/MoveableWidget.cpp
+    ${CMAKE_SOURCE_DIR}/src/CustomerWidget.cpp
+    ${CMAKE_SOURCE_DIR}/src/CustomTimerBtn.cpp
+    ${CMAKE_SOURCE_DIR}/src/LoginWindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/RegisterSuccessHintWindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/RegisterWindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/ResetPasswordWindow.cpp
+)
+target_link_libraries(
+    chat_window
+    PUBLIC
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Gui
+    spdlog::spdlog
+)
+target_compile_definitions(
+    chat_window
+    PRIVATE
+    CHAT_WINDOW_LIBRARY
+)
+
+add_library(
+    chat_mgr
+    SHARED
+    ${CMAKE_SOURCE_DIR}/include/ConfigMgr.h
+    ${CMAKE_SOURCE_DIR}/include/HttpManager.h
+    ${CMAKE_SOURCE_DIR}/include/TcpMgr.h
+
+    ${CMAKE_SOURCE_DIR}/src/ConfigMgr.cpp
+    ${CMAKE_SOURCE_DIR}/src/HttpManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/TcpMgr.cpp
+
+)
+
+target_link_libraries(
+    chat_mgr
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Network
+        Boost::filesystem
+        spdlog::spdlog
+)
+
+target_compile_definitions(
+    chat_mgr
+    PRIVATE
+    CHAT_MGR_LIBRARY
+)
+# 生成可执行文件
+add_executable(     
+    ${PROJECT_NAME}
+    ${CMAKE_SOURCE_DIR}/include/Controller.h
+    ${CMAKE_SOURCE_DIR}/include/FriendListModel.h
+    ${CMAKE_SOURCE_DIR}/include/UserManagement.h
+
+    ${CMAKE_SOURCE_DIR}/src/GlobalTool.cpp
+    ${CMAKE_SOURCE_DIR}/src/Controller.cpp
+    ${CMAKE_SOURCE_DIR}/src/FriendListModel.cpp
+    ${CMAKE_SOURCE_DIR}/src/UserManagement.cpp
+    ${CMAKE_SOURCE_DIR}/src/main.cpp
 )
 
 # 配置链接库
 target_link_libraries(
     ${PROJECT_NAME}
         PUBLIC
-		
-        Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Gui
-        Qt${QT_VERSION_MAJOR}::Network
+        chat_window
+        chat_mgr
 		Qt${QT_VERSION_MAJOR}::Quick
-        ${Boost_LIBRARIES}
-        Boost::filesystem
-
+        spdlog::spdlog
 )
+
+
 
 
 if(QT_VERSION_MAJOR EQUAL 6)

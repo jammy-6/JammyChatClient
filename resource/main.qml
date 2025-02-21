@@ -12,6 +12,14 @@ ApplicationWindow {
     minimumHeight:600
     //Material.theme: Material.Dark
 
+    Component.onCompleted: {
+        console.log(userManagement)
+        console.log(userManagement.test)
+
+        console.log(userManagement.friends.data(userManagement.friends.index(1, 0),262).getLastMsg())
+        console.log(userManagement.friends.data(userManagement.friends.index(userManagement.friends.rowCount()-1, 0),262).getLastMsgTime())
+    }
+
     Row {
         width: root.width
         height: root.height

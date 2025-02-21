@@ -8,9 +8,7 @@ Column{
         width: parent.width
         height:parent.height-inputRow.height
         color:Qt.rgba(0.94, 0.94, 0.94, 1.0)///聊天框背景颜色
-        ListModel {
-            id: chatModel
-        }
+        
         Column {
             anchors.fill: parent
             spacing: 10
@@ -19,9 +17,24 @@ Column{
             ListView {
                 id: chatListView
                 width: parent.width
+                property int currentSelectUserId: userManagement.friends.data(userManagement.friends.index(contactView.currentIndex, 0), 259)
 
+                onCurrentSelectUserIdChanged: {
+                    //currentSelectUserId = userManagement.friends.data(userManagement.friends.index(contactView.currentIndex, 0), 259)
+                    console.log("currentSelectUserId changed to", currentSelectUserId)
+                }
+                
+                Component.onCompleted:{
+                    console.log(userManagement.friends.getChatMsgsByIndex(currentSelectUserId))
+                    console.log(userManagement.friends.getChatMsgsByIndex(currentSelectUserId))
+                    console.log()
+                }
                 height: parent.height - textInput.height - 20
-                model: chatModel
+                model: userManagement.friends.getChatMsgsByIndex(currentSelectUserId)
+               onModelChanged:{
+                    chatListView.positionViewAtEnd()
+               }
+                //model: chatModel
 
                 spacing: 10
                 displaced: Transition {
@@ -29,7 +42,8 @@ Column{
                 }
                 delegate: Row {
                     id:msgRow
-                    layoutDirection:model.isSender?Qt.RightToLeft:Qt.LeftToRight
+                    layoutDirection:model.from===userManagement.loginId?Qt.RightToLeft:Qt.LeftToRight
+                    //layoutDirection:model.isSender?Qt.RightToLeft:Qt.LeftToRight
                     rightPadding: 15
                     width: chatListView.width
                     height: Math.max(column.height,rect1.height)
@@ -50,7 +64,8 @@ Column{
                             antialiasing: true
                             width: 50
                             height: 50
-                            source: model.avatar
+                            source:model.from===userManagement.loginId?userManagement.loginAvatar:userManagement.friends.data(userManagement.friends.index(contactView.currentIndex,0),260)
+                            //source: model.avatar
                             fillMode: Image.PreserveAspectCrop
                             clip: true
                         }
@@ -73,7 +88,7 @@ Column{
                             property int realWidth
                             width:Math.min(chatListView.width/3*2,realWidth+3)
                             horizontalAlignment:Text.AlignCenter
-                            text: model.message
+                            text: model.data
                             Component.onCompleted:{
                                 realWidth = contentWidth
                                 wrapMode=Text.Wrap
@@ -112,24 +127,17 @@ Column{
             onClicked: sendMessage()
         }
     }
-    property bool isSender : true
     function sendMessage() {
-    if (textInput.text !== "") {
-        var date = new Date();
-        chatModel.append({
-                             isSender:isSender,
-                             avatar: "file:///D:/repo/JammyChatClient/resource/UserHeadIcon/head_1.jpg",  // 替换为实际头像路径
-                             message: textInput.text,
-                             time: date.toLocaleTimeString()
-                         });
-        isSender=!isSender
-        textInput.clear();
-        chatListView.positionViewAtEnd()
+        if (textInput.text !== "") {
+            var date = new Date();
+            userManagement.friends.appendMessage(userManagement.loginId, chatListView.currentSelectUserId,  date,textInput.text,);
+            textInput.clear();
+            chatListView.positionViewAtEnd()
 
+        }
     }
-    }
+
 }
-
 
 
 

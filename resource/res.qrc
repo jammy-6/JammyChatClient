@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+		<file>style.qss</file>
         <file>LoginWindow/titleLabel.png</file>
 		<file>RegisterWindow/unvisible.png</file>
 		<file>RegisterWindow/unvisible_hover.png</file>

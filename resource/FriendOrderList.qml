@@ -95,12 +95,12 @@ ScrollView {
         function convertToList()  {
             let newModel = Qt.createQmlObject('import QtQuick 2.15; import QtQuick.Controls 2.15; ListModel {}',
                                               this, "dynamicSnippet");
-            let count = friendListModel.rowCount();
+            let count = userManagement.friends.rowCount();
             newModel.append({"type":"button","avatar": "avatar","name":"name"});
             for (let i = 0; i < count; i++) {
-                let index = friendListModel.index(i, 0);
-                let avatar = friendListModel.data(index,261);
-                let name = friendListModel.data(index,257);
+                let index = userManagement.friends.index(i, 0);
+                let avatar = userManagement.friends.data(index,260);
+                let name = userManagement.friends.data(index,257);
                 console.log(avatar)
                 newModel.append({"type":"item","avatar": avatar,"name":name});
             }

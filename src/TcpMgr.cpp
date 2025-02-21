@@ -1,120 +1,115 @@
-
+ï»¿
 #include "TcpMgr.h"
 #include <QDataStream>
 
-//QTcpSocket _socket;
-//QString _host;
-//uint16_t _port;
-//QByteArray _buffer;
-//bool _b_recv_pending;
-//quint16 _message_id;
-//quint16 _message_len;
+// QTcpSocket _socket;
+// QString _host;
+// uint16_t _port;
+// QByteArray _buffer;
+// bool _b_recv_pending;
+// quint16 _message_id;
+// quint16 _message_len;
 
-TcpMgr::TcpMgr() :
-	_socket(nullptr), _host(""),_port(0),_buffer(),
-	_b_recv_pending(false),_message_id(0),_message_len(0)
-{
-    QObject::connect(&_socket, &QTcpSocket::connected, [&]() {
-        qDebug() << "Connected to server!";
-        // Á¬½Ó½¨Á¢ºó·¢ËÍÏûÏ¢
-        emit sig_con_success(true);
-    });
+TcpMgr::TcpMgr() : _socket(nullptr), _host(""), _port(0), _buffer(),
+				   _b_recv_pending(false), _message_id(0), _message_len(0) {
+	QObject::connect(&_socket, &QTcpSocket::connected, [&]() {
+		qDebug() << "Connected to server!";
+		// è¿æ¥å»ºç«‹åå‘é€æ¶ˆæ¯
+		emit sig_con_success(true);
+	});
 
-    QObject::connect(&_socket, &QTcpSocket::readyRead, [&]() {
-        // µ±ÓĞÊı¾İ¿É¶ÁÊ±£¬¶ÁÈ¡ËùÓĞÊı¾İ
-        // ¶ÁÈ¡ËùÓĞÊı¾İ²¢×·¼Óµ½»º³åÇø
-        _buffer.append(_socket.readAll());
-        QDataStream stream(&_buffer, QIODevice::ReadOnly);
-        stream.setVersion(QDataStream::Qt_5_0);
-        forever{
-            //ÏÈ½âÎöÍ·²¿
-           if (!_b_recv_pending) {
-               // ¼ì²é»º³åÇøÖĞµÄÊı¾İÊÇ·ñ×ã¹»½âÎö³öÒ»¸öÏûÏ¢Í·£¨ÏûÏ¢ID + ÏûÏ¢³¤¶È£©
-               if (_buffer.size() < static_cast<int>(sizeof(quint16) * 2)) {
-                   return; // Êı¾İ²»¹»£¬µÈ´ı¸ü¶àÊı¾İ
-               }
-               // Ô¤¶ÁÈ¡ÏûÏ¢IDºÍÏûÏ¢³¤¶È£¬µ«²»´Ó»º³åÇøÖĞÒÆ³ı
-               stream >> _message_id >> _message_len;
-               //½«buffer ÖĞµÄÇ°ËÄ¸ö×Ö½ÚÒÆ³ı
-               _buffer = _buffer.mid(sizeof(quint16) * 2);
-               // Êä³ö¶ÁÈ¡µÄÊı¾İ
-               qDebug() << "Message ID:" << _message_id << ", Length:" << _message_len;
-           }
-            //bufferÊ£Óà³¤¶ÁÊÇ·ñÂú×ãÏûÏ¢Ìå³¤¶È£¬²»Âú×ãÔòÍË³ö¼ÌĞøµÈ´ı½ÓÊÜ
-           if (_buffer.size() < _message_len) {
-                _b_recv_pending = true;
-                return;
-           }
-           _b_recv_pending = false;
-           // ¶ÁÈ¡ÏûÏ¢Ìå
-           QByteArray messageBody = _buffer.mid(0, _message_len);
-            qDebug() << "receive body msg is " << messageBody;
-           _buffer = _buffer.mid(_message_len);
-           emit sig_recv_data((MSG_IDS)_message_id, QString::fromStdString(messageBody.toStdString()));
-        }
-    });
+	QObject::connect(&_socket, &QTcpSocket::readyRead, [&]() {
+		// å½“æœ‰æ•°æ®å¯è¯»æ—¶ï¼Œè¯»å–æ‰€æœ‰æ•°æ®
+		// è¯»å–æ‰€æœ‰æ•°æ®å¹¶è¿½åŠ åˆ°ç¼“å†²åŒº
+		_buffer.append(_socket.readAll());
+		QDataStream stream(&_buffer, QIODevice::ReadOnly);
+		stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
+		forever {
+			// å…ˆè§£æå¤´éƒ¨
+			if (!_b_recv_pending) {
+				// æ£€æŸ¥ç¼“å†²åŒºä¸­çš„æ•°æ®æ˜¯å¦è¶³å¤Ÿè§£æå‡ºä¸€ä¸ªæ¶ˆæ¯å¤´ï¼ˆæ¶ˆæ¯ID + æ¶ˆæ¯é•¿åº¦ï¼‰
+				if (_buffer.size() < static_cast<int>(sizeof(quint16) * 2)) {
+					return; // æ•°æ®ä¸å¤Ÿï¼Œç­‰å¾…æ›´å¤šæ•°æ®
+				}
+				// é¢„è¯»å–æ¶ˆæ¯IDå’Œæ¶ˆæ¯é•¿åº¦ï¼Œä½†ä¸ä»ç¼“å†²åŒºä¸­ç§»é™¤
+				stream >> _message_id >> _message_len;
+				// å°†buffer ä¸­çš„å‰å››ä¸ªå­—èŠ‚ç§»é™¤
+				_buffer = _buffer.mid(sizeof(quint16) * 2);
+				// è¾“å‡ºè¯»å–çš„æ•°æ®
+				qDebug() << "Message ID:" << _message_id << ", Length:" << _message_len;
+			}
+			// bufferå‰©ä½™é•¿è¯»æ˜¯å¦æ»¡è¶³æ¶ˆæ¯ä½“é•¿åº¦ï¼Œä¸æ»¡è¶³åˆ™é€€å‡ºç»§ç»­ç­‰å¾…æ¥å—
+			if (_buffer.size() < _message_len) {
+				_b_recv_pending = true;
+				return;
+			}
+			_b_recv_pending = false;
+			// è¯»å–æ¶ˆæ¯ä½“
+			QByteArray messageBody = _buffer.mid(0, _message_len);
+			qDebug() << "receive body msg is " << messageBody;
+			_buffer = _buffer.mid(_message_len);
+			emit sig_recv_data((MSG_IDS)_message_id, QString::fromStdString(messageBody.toStdString()));
+		}
+	});
 
-
-    QObject::connect(&_socket, &QTcpSocket::errorOccurred,
-        [&](QTcpSocket::SocketError socketError) {
-            qDebug() << "Error:" << _socket.errorString();
-            switch (socketError) {
-            case QTcpSocket::ConnectionRefusedError:
-                qDebug() << "Connection Refused!";
-                emit sig_con_success(false);
-                break;
-            case QTcpSocket::RemoteHostClosedError:
-                qDebug() << "Remote Host Closed Connection!";
-                break;
-            case QTcpSocket::HostNotFoundError:
-                qDebug() << "Host Not Found!";
-                emit sig_con_success(false);
-                break;
-            case QTcpSocket::SocketTimeoutError:
-                qDebug() << "Connection Timeout!";
-                emit sig_con_success(false);
-                break;
-            case QTcpSocket::NetworkError:
-                qDebug() << "Network Error!";
-                break;
-            default:
-                qDebug() << "Other Error!";
-                break;
-            }
-        });
-    // ´¦ÀíÁ¬½Ó¶Ï¿ª
-    QObject::connect(&_socket, &QTcpSocket::disconnected, [&]() {
-        qDebug() << "Disconnected from server.";
-        });
-    QObject::connect(this, &TcpMgr::sig_send_data, this, &TcpMgr::slot_send_data);
+	QObject::connect(&_socket, &QTcpSocket::errorOccurred,
+					 [&](QTcpSocket::SocketError socketError) {
+						 qDebug() << "Error:" << _socket.errorString();
+						 switch (socketError) {
+						 case QTcpSocket::ConnectionRefusedError:
+							 qDebug() << "Connection Refused!";
+							 emit sig_con_success(false);
+							 break;
+						 case QTcpSocket::RemoteHostClosedError:
+							 qDebug() << "Remote Host Closed Connection!";
+							 break;
+						 case QTcpSocket::HostNotFoundError:
+							 qDebug() << "Host Not Found!";
+							 emit sig_con_success(false);
+							 break;
+						 case QTcpSocket::SocketTimeoutError:
+							 qDebug() << "Connection Timeout!";
+							 emit sig_con_success(false);
+							 break;
+						 case QTcpSocket::NetworkError:
+							 qDebug() << "Network Error!";
+							 break;
+						 default:
+							 qDebug() << "Other Error!";
+							 break;
+						 }
+					 });
+	// å¤„ç†è¿æ¥æ–­å¼€
+	QObject::connect(&_socket, &QTcpSocket::disconnected, [&]() {
+		qDebug() << "Disconnected from server.";
+	});
+	QObject::connect(this, &TcpMgr::sig_send_data, this, &TcpMgr::slot_send_data);
 }
 
-void TcpMgr::connectToServer(ServerInfo si)
-{
-    qDebug() << "receive tcp connect signal";
-    // ³¢ÊÔÁ¬½Óµ½·şÎñÆ÷
-    qDebug() << "Connecting to server...";
-    _host = si.Host;
-    _port = static_cast<uint16_t>(si.Port.toUInt());
-    _socket.connectToHost(si.Host, _port);
+void TcpMgr::connectToServer(ServerInfo si) {
+	qDebug() << "receive tcp connect signal";
+	// å°è¯•è¿æ¥åˆ°æœåŠ¡å™¨
+	qDebug() << "Connecting to server...";
+	_host = si.Host;
+	_port = static_cast<uint16_t>(si.Port.toUInt());
+	_socket.connectToHost(si.Host, _port);
 }
 
-void TcpMgr::slot_send_data(MSG_IDS reqId, QString data)
-{
-    uint16_t id = reqId;
-    // ½«×Ö·û´®×ª»»ÎªUTF-8±àÂëµÄ×Ö½ÚÊı×é
-    QByteArray dataBytes = data.toUtf8();
-    // ¼ÆËã³¤¶È£¨Ê¹ÓÃÍøÂç×Ö½ÚĞò×ª»»£©
-    quint16 len = static_cast<quint16>(data.size());
-    // ´´½¨Ò»¸öQByteArrayÓÃÓÚ´æ´¢Òª·¢ËÍµÄËùÓĞÊı¾İ
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    // ÉèÖÃÊı¾İÁ÷Ê¹ÓÃÍøÂç×Ö½ÚĞò
-    out.setByteOrder(QDataStream::BigEndian);
-    // Ğ´ÈëIDºÍ³¤¶È
-    out << id << len;
-    // Ìí¼Ó×Ö·û´®Êı¾İ
-    block.append(data.toStdString().c_str());
-    // ·¢ËÍÊı¾İ
-    _socket.write(block);
+void TcpMgr::slot_send_data(MSG_IDS reqId, QString data) {
+	uint16_t id = reqId;
+	// å°†å­—ç¬¦ä¸²è½¬æ¢ä¸ºUTF-8ç¼–ç çš„å­—èŠ‚æ•°ç»„
+	QByteArray dataBytes = data.toUtf8();
+	// è®¡ç®—é•¿åº¦ï¼ˆä½¿ç”¨ç½‘ç»œå­—èŠ‚åºè½¬æ¢ï¼‰
+	quint16 len = static_cast<quint16>(data.size());
+	// åˆ›å»ºä¸€ä¸ªQByteArrayç”¨äºå­˜å‚¨è¦å‘é€çš„æ‰€æœ‰æ•°æ®
+	QByteArray block;
+	QDataStream out(&block, QIODevice::WriteOnly);
+	// è®¾ç½®æ•°æ®æµä½¿ç”¨ç½‘ç»œå­—èŠ‚åº
+	out.setByteOrder(QDataStream::BigEndian);
+	// å†™å…¥IDå’Œé•¿åº¦
+	out << id << len;
+	// æ·»åŠ å­—ç¬¦ä¸²æ•°æ®
+	block.append(data.toStdString().c_str());
+	// å‘é€æ•°æ®
+	_socket.write(block);
 }

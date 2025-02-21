@@ -1,7 +1,7 @@
 ﻿#pragma execution_character_set("utf-8")
 #include "CustomTimerBtn.h"
 
-CustomTimerBtn::CustomTimerBtn(QWidget* parent) {
+CustomTimerBtn::CustomTimerBtn(QWidget *parent) {
 	timer_ = new QTimer(this);
 	connect(timer_, &QTimer::timeout, this, &CustomTimerBtn::slotTimeout);
 }
@@ -20,10 +20,9 @@ void CustomTimerBtn::slotTimeout() {
 	countdown_--;
 	this->setText(QString::number(countdown_));
 	timer_->start();
-	
 }
 
-void CustomTimerBtn::mouseReleaseEvent(QMouseEvent* e) {
+void CustomTimerBtn::mouseReleaseEvent(QMouseEvent *e) {
 	if (e->button() == Qt::LeftButton) {
 		this->setText(QString::number(countdown_));
 		timer_->start(1000);

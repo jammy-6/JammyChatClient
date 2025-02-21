@@ -1,8 +1,8 @@
 ﻿#ifndef GLOBAL_H
 #define GLOBAL_H
+#include "Config.h"
 #include <QString>
 #include <iostream>
-#include "Config.h"
 #include <unordered_map>
 enum MODULE {
 	MODULE_REGISTER = 0,
@@ -28,31 +28,31 @@ enum MSG_IDS {
 
 enum ERRORCODE {
 	SUCCESS = 0,
-	Error_Json = 1001,  //Json解析错误
-	RPCFailed = 1002,  //RPC请求错误
-	Password_Not_Equal = 1003, //密码不一致
-	Varify_Code_Expired = 1004, //验证码失效
-	Varify_Code_Not_Equal = 1005, //验证码不一致
-	Error_User_Exist = 1006,///用户已存在
-	Error_User_Not_Exist = 1007,//用户不存在
-	Error_Update_Password = 1008,///更新数据库失败
-	ERROR_PASSWORD_NOT_CORRECT = 1009,///密码不正确
-	ERROR_USER_EMAIL_NOT_MATCH = 1010,//用户名与邮箱不匹配
-	ERROR_NETWORK=1030,///网络错误
+	Error_Json = 1001,				   // Json解析错误
+	RPCFailed = 1002,				   // RPC请求错误
+	Password_Not_Equal = 1003,		   // 密码不一致
+	Varify_Code_Expired = 1004,		   // 验证码失效
+	Varify_Code_Not_Equal = 1005,	   // 验证码不一致
+	Error_User_Exist = 1006,		   /// 用户已存在
+	Error_User_Not_Exist = 1007,	   // 用户不存在
+	Error_Update_Password = 1008,	   /// 更新数据库失败
+	ERROR_PASSWORD_NOT_CORRECT = 1009, /// 密码不正确
+	ERROR_USER_EMAIL_NOT_MATCH = 1010, // 用户名与邮箱不匹配
+	ERROR_NETWORK = 1030,			   /// 网络错误
 };
 
 const std::unordered_map<ERRORCODE, std::string> ErrorMap = {
 	{ERRORCODE::Error_Json, "服务端JSON解析错误"},
-	{ERRORCODE::RPCFailed,"服务端RPC请求错误"},
+	{ERRORCODE::RPCFailed, "服务端RPC请求错误"},
 	{ERRORCODE::Password_Not_Equal, "两次密码不一致"},
-	{ERRORCODE::Varify_Code_Expired,"验证码失效"},
+	{ERRORCODE::Varify_Code_Expired, "验证码失效"},
 	{ERRORCODE::Varify_Code_Not_Equal, "验证码不一致"},
-	{ERRORCODE::Error_User_Exist,"用户名或邮箱已存在"},
+	{ERRORCODE::Error_User_Exist, "用户名或邮箱已存在"},
 	{ERRORCODE::Error_User_Not_Exist, "用户名或邮箱不存在"},
-	{ERRORCODE::Error_Update_Password,"更新数据库失败"},
+	{ERRORCODE::Error_Update_Password, "更新数据库失败"},
 	{ERRORCODE::ERROR_PASSWORD_NOT_CORRECT, "密码不正确"},
-	{ERRORCODE::ERROR_NETWORK,"网络错误！"},
-	{ERRORCODE::ERROR_USER_EMAIL_NOT_MATCH,"用户名与邮箱不匹配！"},
+	{ERRORCODE::ERROR_NETWORK, "网络错误！"},
+	{ERRORCODE::ERROR_USER_EMAIL_NOT_MATCH, "用户名与邮箱不匹配！"},
 };
 
 typedef struct ServerInfo {
