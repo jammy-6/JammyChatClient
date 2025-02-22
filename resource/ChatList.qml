@@ -30,7 +30,7 @@ Column{
                     console.log()
                 }
                 height: parent.height - textInput.height - 20
-                model: userManagement.friends.getChatMsgsByIndex(currentSelectUserId)
+                model: userManagement.friends.getChatMsgsByIndex(currentSelectUserId) 
                onModelChanged:{
                     chatListView.positionViewAtEnd()
                }
@@ -64,7 +64,8 @@ Column{
                             antialiasing: true
                             width: 50
                             height: 50
-                            source:model.from===userManagement.loginId?userManagement.loginAvatar:userManagement.friends.data(userManagement.friends.index(contactView.currentIndex,0),260)
+                            //如果发送方是登录用户，显示登录用户头像，否则为对应好友的头像
+                            source:model.from===userManagement.loginId?userManagement.loginAvatar:userManagement.getFriendAvatarBySelectIndex(contactView.currentIndex)
                             //source: model.avatar
                             fillMode: Image.PreserveAspectCrop
                             clip: true
@@ -130,10 +131,11 @@ Column{
     function sendMessage() {
         if (textInput.text !== "") {
             var date = new Date();
+            //往聊天框中插入数据
             userManagement.friends.appendMessage(userManagement.loginId, chatListView.currentSelectUserId,  date,textInput.text,);
             textInput.clear();
-            chatListView.positionViewAtEnd()
-
+            chatListView.positionViewAtEnd();
+            //将消息体发送至
         }
     }
 

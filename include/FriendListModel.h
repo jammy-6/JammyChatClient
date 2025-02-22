@@ -37,6 +37,8 @@ struct FriendData : public UserData {
 
 class MessageModel : public QAbstractListModel {
 	Q_OBJECT
+	Q_PROPERTY(QString lastMsg READ getLastMsg NOTIFY dataChanged)
+	Q_PROPERTY(QString lastMsgTime READ getLastMsgTime NOTIFY dataChanged)
 
 public:
 	enum MessageRoles {
@@ -46,25 +48,28 @@ public:
 		TimeRole,
 		DataRole
 	};
-	Q_INVOKABLE QString getLastMsg() const {
+	QString getLastMsg() const {
 		if (m_messages.size() > 0) {
 			return m_messages.last().data;
 		}
 		return "";
 	}
-	Q_INVOKABLE QString getLastMsgTime() const {
+	QString getLastMsgTime() const {
 		if (m_messages.size() > 0) {
 			return m_messages.last().time.toString("hh:mm");
 		}
 		return "";
 	}
 	MessageModel(QObject *parent = nullptr);
-
+	// MessageModel(QVector<Message> &messages, QObject *parent = nullptr);
 	void setMessages(const QVector<Message> &messages);
 	void appendMessage(const Message &message);
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 	QHash<int, QByteArray> roleNames() const override;
+signals:
+	// 主要用于更新聊天模块好友列表的最近消息和时间
+	void dataChanged();
 
 private:
 	QVector<Message> m_messages;
@@ -95,14 +100,14 @@ public:
 								   QTime time,
 								   QString data);
 
-	void setFriends(const QVector<FriendData> &friends);
+	void setFriends(QVector<FriendData> &friends);
 	void addFriend(FriendData &newFriend);
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 	QHash<int, QByteArray> roleNames() const override;
 
-private:
+public:
 	QVector<FriendData> m_friends;
 	QMap<int, QAbstractListModel *> m_messageModels; // 存储每个好友的MessageModel实例
 };

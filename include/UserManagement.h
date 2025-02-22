@@ -14,6 +14,7 @@ class UserManagement : public QObject, public Singleton<UserManagement> {
 	Q_PROPERTY(int loginId READ getLoginId)
 	Q_PROPERTY(QString test READ getTest)
 	Q_PROPERTY(QString loginAvatar READ getLoginAvatar)
+
 	enum UserManagementRoles {
 		/*        TypeRole*/
 		FriendsRole = Qt::UserRole + 1,
@@ -25,6 +26,13 @@ public:
 	FriendModel *getFriends() {
 		return friends;
 	}
+	Q_INVOKABLE QString getFriendAvatarBySelectIndex(int index) {
+		if (index >= 0 && index < friends->rowCount()) {
+			return friends->m_friends[index].avatar;
+		}
+		return "";
+	}
+
 	int getLoginId() {
 		return loginUser.userId;
 	}

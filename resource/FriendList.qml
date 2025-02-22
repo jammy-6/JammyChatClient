@@ -50,7 +50,7 @@ ScrollView {
                             }
 
                             Text {
-                                text: model.chatMsgs.getLastMsgTime()
+                                text: model.chatMsgs.lastMsgTime
                                 font.pixelSize: 14
                                 color: "#999999"
                                 width: parent.parent.width - (parent.children[0].implicitWidth + parent.spacing)
@@ -75,7 +75,7 @@ ScrollView {
                             }
 
                             Text {
-                                text: model.chatMsgs.getLastMsg()
+                                text: model.chatMsgs.lastMsg
                                 width: parent.parent.width - (parent.children[0].implicitWidth + parent.spacing)
 
                                 elide: Text.ElideRight

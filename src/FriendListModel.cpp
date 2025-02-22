@@ -3,6 +3,8 @@
 MessageModel::MessageModel(QObject *parent)
 	: QAbstractListModel(parent) {}
 
+// MessageModel::MessageModel(QVector<Message> &messages, QObject *parent)
+// 	: QAbstractListModel(parent), m_messages(messages) {}
 void MessageModel::setMessages(const QVector<Message> &messages) {
 	beginResetModel();
 	m_messages = messages;
@@ -13,6 +15,7 @@ void MessageModel::appendMessage(const Message &message) {
 	beginInsertRows(QModelIndex(), rowCount(), rowCount());
 	m_messages << message;
 	endInsertRows();
+	emit dataChanged();
 }
 
 int MessageModel::rowCount(const QModelIndex &parent) const {
@@ -66,11 +69,11 @@ void FriendModel::appendMessage(int from,
 	}
 	return;
 }
-void FriendModel::setFriends(const QVector<FriendData> &friends) {
+void FriendModel::setFriends(QVector<FriendData> &friends) {
 	beginResetModel();
 	m_friends = friends;
 	m_messageModels.clear();
-	for (const FriendData &friendData : friends) {
+	for (FriendData &friendData : friends) {
 		MessageModel *messageModel = new MessageModel(this);
 		messageModel->setMessages(friendData.chatMsgs);
 		m_messageModels.insert(friendData.userId, messageModel);
